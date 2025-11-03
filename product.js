@@ -366,7 +366,7 @@ const setupQuickAddListeners = () => {
                     const panelPayload = { sku: staticProductData.mega_member.sku, __co: [{ "__oid": staticProductData.mega_member.__oid, "__ov": staticProductData.mega_member.__vid }], __q: 1 };
                     const panelResult = await addToCartAPI(panelPayload, isGuest);
                     if (!panelResult || !panelResult.success) throw new Error(panelResult ? panelResult.message : 'Could not add Comprehensive Panel.');
-                    
+
                     const planPayload = { sku: selectedPlan.dataset.sku, __co: [{ "__oid": parseInt(selectedPlan.dataset.oid), "__ov": parseInt(selectedPlan.dataset.vid) }], __q: 1 };
                     const planResult = await addToCartAPI(planPayload, isGuest);
                     if (!planResult || !planResult.success) throw new Error(planResult ? planResult.message : 'Could not add selected plan.');
@@ -377,7 +377,7 @@ const setupQuickAddListeners = () => {
                 }
 
                 window.showToast(successMessage, 'success');
-                if(window.toggleCart) window.toggleCart();
+                if (window.toggleCart) window.toggleCart();
 
             } catch (error) {
                 console.error(error);
