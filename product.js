@@ -183,8 +183,9 @@ const injectStyles = () => {
             z-index: 10;
         }
 
-        .pl-content:hover .quick-add-popup,
-        .pl-content .quick-add-popup.visible {
+        .add-tocart-button:hover + .quick-add-popup,
+        .quick-add-popup:hover,
+        .add-tocart-button.active + .quick-add-popup {
             display: block;
         }
 
@@ -308,6 +309,9 @@ const _renderProductsToDOM = (products) => {
         return;
     }
 
+    const isMember = !!window.memerShip;
+    const priceKey = isMember ? 'mega_member_installment_price' : 'installment_price';
+
     products.forEach(product => {
         const productElement = document.createElement('div');
         productElement.classList.add('collection-item', 'w-dyn-item', 'w-col', 'w-col-4');
@@ -331,7 +335,7 @@ const _renderProductsToDOM = (products) => {
                 <div class="plan-radio"></div>
                 <div class="plan-details">
                     <div class="plan-label">${option.frequency_count} ${option.frequency_unit}</div>
-                    <div class="plan-price">$${parseFloat(option.installment_price).toFixed(0)}</div>
+                    <div class="plan-price">$${parseFloat(option[priceKey]).toFixed(0)}</div>
                 </div>
             </div>
         `).join('');
@@ -348,11 +352,11 @@ const _renderProductsToDOM = (products) => {
                 <div class="pl-content">
                     <div class="product-name">${product.product_name}</div>
                     <div class="pl-meta">$${product.lowest_price}/mo</div>
+                    <button class="button add-tocart-button w-button">ADD TO CART</button>
                     <div class="quick-add-popup">
                         ${quickAddOptions}
                         <button class="button quick-add-to-cart-btn w-button">Add to Cart</button>
                     </div>
-                    <button class="button add-tocart-button w-button">ADD TO CART</button>
                 </div>
             </div>
         `;
@@ -362,32 +366,27 @@ const _renderProductsToDOM = (products) => {
 };
 
 const setupQuickAddListeners = () => {
-    const plContents = document.querySelectorAll('.pl-content');
+    const productWraps = document.querySelectorAll('.product-wrap');
 
-    plContents.forEach(plContent => {
-        const quickAddBtn = plContent.querySelector('.add-tocart-button');
-        const quickAddPopup = plContent.querySelector('.quick-add-popup');
-        const planItems = plContent.querySelectorAll('.plan-item');
-        const addToCartBtn = plContent.querySelector('.quick-add-to-cart-btn');
+    productWraps.forEach(productWrap => {
+        const quickAddBtn = productWrap.querySelector('.add-tocart-button');
+        const quickAddPopup = productWrap.querySelector('.quick-add-popup');
+        const planItems = productWrap.querySelectorAll('.plan-item');
+        const addToCartBtn = productWrap.querySelector('.quick-add-to-cart-btn');
 
         quickAddBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            quickAddPopup.classList.toggle('visible');
+            quickAddBtn.classList.toggle('active');
         });
 
-        plContent.addEventListener('mouseenter', () => {
+        quickAddBtn.addEventListener('mouseenter', () => {
             quickAddBtn.textContent = 'QUICK ADD';
         });
 
-        plContent.addEventListener('mouseleave', () => {
-            if (!quickAddPopup.classList.contains('visible')) {
+        quickAddBtn.addEventListener('mouseleave', () => {
+            if (!quickAddBtn.classList.contains('active')) {
                 quickAddBtn.textContent = 'ADD TO CART';
             }
-        });
-        
-        quickAddPopup.addEventListener('mouseleave', () => {
-             quickAddPopup.classList.remove('visible');
-             quickAddBtn.textContent = 'ADD TO CART';
         });
 
         planItems.forEach(item => {
@@ -398,7 +397,7 @@ const setupQuickAddListeners = () => {
         });
 
         addToCartBtn.addEventListener('click', async (e) => {
-            const selectedPlan = plContent.querySelector('.plan-item.selected');
+            const selectedPlan = productWrap.querySelector('.plan-item.selected');
             if (!selectedPlan) {
                 window.showToast('Please select a plan.', 'error');
                 return;
