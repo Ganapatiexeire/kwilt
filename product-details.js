@@ -470,6 +470,21 @@ const initProductDetailPage = async () => {
 
         setupEventListeners(userState, productData);
         window.kwiltProductDetailsUtils.updateUI();
+
+        // Braze Tracking: Product Viewed
+        if (window.trackEvent) {
+            const eventProperties = {
+                product_id: productData.sku,
+                product_name: productData.product_name,
+                price: productData.price,
+                mega_member_price: productData.mega_member_price,
+                has_mega_pricing: !!productData.mega_member_price,
+                is_mega_member: userState.isMember,
+                timestamp: new Date().toISOString()
+            };
+            window.trackEvent('product_viewed', eventProperties);
+            console.log('Braze event fired: product_viewed', eventProperties);
+        }
     } else {
         container.innerHTML = '<p style="text-align: center; margin-top: 50px;">Sorry, this product could not be loaded.</p>';
     }

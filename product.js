@@ -144,6 +144,18 @@ const _renderProductsToDOM = (products) => {
         container.appendChild(productElement);
     });
     setupQuickAddListeners();
+
+    // Braze Tracking: Product Listing Viewed
+    if (window.trackEvent) {
+        const categories = [...new Set(products.flatMap(p => p.category || []))];
+        const eventProperties = {
+            total_products: products.length,
+            categories: categories,
+            timestamp: new Date().toISOString()
+        };
+        window.trackEvent('product_listing_viewed', eventProperties);
+        console.log('Braze event fired: product_listing_viewed', eventProperties);
+    }
 };
 
 const setupQuickAddListeners = () => {
@@ -218,6 +230,23 @@ const setupQuickAddListeners = () => {
                 container.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
 
+                // Braze Tracking: Add to Cart Attempted
+                if (window.trackEvent) {
+                    const productElement = item.closest('.product-wrap');
+                    const productName = productElement.querySelector('.product-name').textContent;
+                    const isPanelSelected = comprehensivePanel.classList.contains('selected');
+                    const eventProperties = {
+                        product_id: item.dataset.sku,
+                        product_name: productName,
+                        price: parseFloat(item.querySelector('.qa-plan-price').textContent.replace('$', '')),
+                        purchase_option: parentAccordion.id === 'qa-member-pricing-accord' ? 'member' : 'non-member',
+                        comprehensive_panel_selected: isPanelSelected,
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('add_to_cart_attempted', eventProperties);
+                    console.log('Braze event fired: add_to_cart_attempted', eventProperties);
+                }
+
                 // Trigger selection logic for parent accordion
                 if (parentAccordion.id === 'qa-member-pricing-accord') selectMemberPricing();
                 else selectNonMemberPricing();
@@ -235,15 +264,49 @@ const setupQuickAddListeners = () => {
                         successMessage = 'Items added to cart!';
                         const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }], __q: 1 };
                         await addToCartAPI(panelPayload, isGuest);
+
+                        // Braze Tracking: Comprehensive Panel Added
+                        if (window.trackEvent) {
+                            const eventProperties = {
+                                product_id: comprehensivePanel.dataset.sku,
+                                timestamp: new Date().toISOString()
+                            };
+                            window.trackEvent('comprehensive_panel_added', eventProperties);
+                            console.log('Braze event fired: comprehensive_panel_added', eventProperties);
+                        }
+
                         const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
                         await addToCartAPI(planPayload, isGuest);
                     } else {
                         const payload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
                         await addToCartAPI(payload, isGuest);
                     }
+
+                    // Braze Tracking: Add to Cart Success
+                    if (window.trackEvent) {
+                        const eventProperties = {
+                            product_id: item.dataset.sku,
+                            cart_id: getCartId(),
+                            timestamp: new Date().toISOString()
+                        };
+                        window.trackEvent('add_to_cart_success', eventProperties);
+                        console.log('Braze event fired: add_to_cart_success', eventProperties);
+                    }
+
                     window.showToast(successMessage, 'success');
                     if(window.toggleCart) window.toggleCart();
                 } catch (error) {
+                    // Braze Tracking: Add to Cart Failed
+                    if (window.trackEvent) {
+                        const eventProperties = {
+                            product_id: item.dataset.sku,
+                            reason: error.message || 'Unknown error',
+                            timestamp: new Date().toISOString()
+                        };
+                        window.trackEvent('add_to_cart_failed', eventProperties);
+                        console.log('Braze event fired: add_to_cart_failed', eventProperties);
+                    }
+
                     window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
                 } finally {
                     hideButtonSpinner(quickAddBtn, 'ADD TO CART');
