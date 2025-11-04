@@ -151,6 +151,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (data && data.data) {
                 localStorage.setItem('atkn', data.data)
 
+                // Braze Tracking: Login Success
+                if (window.trackEvent) {
+                    const eventProperties = {
+                        email: payload.email,
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('login_success', eventProperties);
+                    console.log('Braze event fired: login_success', eventProperties);
+                }
+
                 // --- NEW: Merge Cart Logic ---
                 const cartId = localStorage.getItem(CART_ID_KEY);
                 if (cartId) {
@@ -184,6 +194,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                 window.location.href = '/'
             }
         } catch (err) {
+            // Braze Tracking: Login Failed
+            if (window.trackEvent) {
+                const eventProperties = {
+                    email: payload.email,
+                    timestamp: new Date().toISOString()
+                };
+                window.trackEvent('login_failed', eventProperties);
+                console.log('Braze event fired: login_failed', eventProperties);
+            }
+
             errorEl = document.createElement("div");
             errorEl.className = "form-error-message";
             errorEl.textContent = err.message || "Login failed, please try again.";
@@ -224,10 +244,21 @@ document.addEventListener("DOMContentLoaded", async function () {
             var formEl = document.querySelector(".member-login-form");
             if (!formEl) return;
 
+            var loginData = getLoginFormData(formEl);
+
+            // Braze Tracking: Login Attempted
+            if (window.trackEvent) {
+                const eventProperties = {
+                    email: loginData.email,
+                    timestamp: new Date().toISOString()
+                };
+                window.trackEvent('login_attempted', eventProperties);
+                console.log('Braze event fired: login_attempted', eventProperties);
+            }
+
             attachLiveLoginValidation(formEl);
 
             if (validateLoginForm(formEl)) {
-                var loginData = getLoginFormData(formEl);
                 await handleLogin(loginData)
 
             }
@@ -240,10 +271,19 @@ document.addEventListener("DOMContentLoaded", async function () {
             var formEl = document.querySelector(".member-login-form");
             if (!formEl) return;
 
-            if (validateLoginForm(formEl)) {
-                var loginData = getLoginFormData(formEl);
-                await handleLogin(loginData)
+            var loginData = getLoginFormData(formEl);
+            // Braze Tracking: Login Attempted
+            if (window.trackEvent) {
+                const eventProperties = {
+                    email: loginData.email,
+                    timestamp: new Date().toISOString()
+                };
+                window.trackEvent('login_attempted', eventProperties);
+                console.log('Braze event fired: login_attempted', eventProperties);
+            }
 
+            if (validateLoginForm(formEl)) {
+                await handleLogin(loginData)
             }
         }
     });

@@ -1,16 +1,6 @@
 const API_URL = 'https://kwilt-intake-396730550724.us-central1.run.app/products';
 
-// --- START: Static Data for Quick Add ---
-const staticProductData = {
-    "child_options": [
-        { "sku": "membership", "product_name": "Semaglutide", "subscription_active": true, "frequency_count": "28", "frequency_unit": "day", "installment_price": "249.00", "adjustment_price": "0.00", "mega_member_installment_price": "225.00", "__oid": 55, "__vid": 200 },
-        { "sku": "sema-12-week", "product_name": "Semaglutide", "subscription_active": true, "frequency_count": "12", "frequency_unit": "week", "installment_price": "710.00", "adjustment_price": "0.00", "mega_member_installment_price": "685.00", "__oid": 23, "__vid": 172 },
-        { "sku": "sema-6-month", "product_name": "Semaglutide", "subscription_active": true, "frequency_count": "24", "frequency_unit": "week", "installment_price": "1345.00", "adjustment_price": "0.00", "mega_member_installment_price": "1325.00", "__oid": 25, "__vid": 173 },
-        { "sku": "sema-12-month", "product_name": "Semaglutide", "subscription_active": true, "frequency_count": "48", "frequency_unit": "week", "installment_price": "2540.00", "adjustment_price": "0.00", "mega_member_installment_price": "2525.00", "__oid": 27, "__vid": 174 }
-    ],
-    "mega_member": { "sku": "MEGA-MEMBERSHIP", "product_name": "Comprehensive Panel", "subscription_active": true, "frequency_count": "365", "frequency_unit": "day", "installment_price": "449.00", "adjustment_price": "0.00", "mega_member_installment_price": "0.00", "__oid": 44, "__vid": 201 }
-};
-// --- END: Static Data for Quick Add ---
+
 
 window.kwiltProductUtils = window.kwiltProductUtils || {};
 
@@ -120,8 +110,11 @@ const _renderProductsToDOM = (products) => {
         const productElement = document.createElement('div');
         productElement.classList.add('collection-item', 'w-dyn-item', 'w-col', 'w-col-4');
 
-        const memberPlanItems = staticProductData.child_options.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.mega_member_installment_price).toFixed(0)}</div></div>`).join('');
-        const nonMemberPlanItems = staticProductData.child_options.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.installment_price).toFixed(0)}</div></div>`).join('');
+        const childOptions = product.child_options || [];
+        const megaMember = product.mega_member;
+
+        const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.mega_member_installment_price).toFixed(0)}</div></div>`).join('');
+        const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.installment_price).toFixed(0)}</div></div>`).join('');
 
         productElement.innerHTML = `
             <div class="product-wrap">
@@ -133,15 +126,15 @@ const _renderProductsToDOM = (products) => {
                         <button class="button add-tocart-button w-button">ADD TO CART</button>
                         <div class="qa-popup">
                             <div class="qa-accordion" id="qa-member-pricing-accord">
-                                <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Member Pricing</div></div><div class="qa-accordion-price">from $${parseFloat(staticProductData.child_options[0].mega_member_installment_price).toFixed(0)}</div></div>
+                                <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Member Pricing</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div></div>
                                 <div class="qa-plan-list">${memberPlanItems}</div>
                             </div>
                             <div class="qa-accordion" id="qa-non-member-accord">
-                                <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Non-Member</div></div><div class="qa-accordion-price">from $${parseFloat(staticProductData.child_options[0].installment_price).toFixed(0)}</div></div>
+                                <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Non-Member</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div></div>
                                 <div class="qa-plan-list">${nonMemberPlanItems}</div>
                             </div>
-                            <div class="qa-panel" id="qa-comprehensive-panel">
-                                <div class="qa-panel-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-panel-title">Comprehensive Panel</div></div><div class="qa-panel-price">$${parseFloat(staticProductData.mega_member.installment_price).toFixed(0)}/year</div></div>
+                            <div class="qa-panel" id="qa-comprehensive-panel" data-sku="${megaMember ? megaMember.sku : ''}" data-oid="${megaMember ? megaMember.__oid : ''}" data-vid="${megaMember ? megaMember.__vid : ''}">
+                                <div class="qa-panel-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-panel-title">Comprehensive Panel</div></div><div class="qa-panel-price">$${megaMember ? parseFloat(megaMember.installment_price).toFixed(0) : ''}/year</div></div>
                             </div>
                         </div>
                     </div>
@@ -240,7 +233,7 @@ const setupQuickAddListeners = () => {
                         await addToCartAPI(payload, isGuest);
                     } else if (isPanelSelected) {
                         successMessage = 'Items added to cart!';
-                        const panelPayload = { sku: staticProductData.mega_member.sku, __co: [{ "__oid": staticProductData.mega_member.__oid, "__ov": staticProductData.mega_member.__vid }], __q: 1 };
+                        const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }], __q: 1 };
                         await addToCartAPI(panelPayload, isGuest);
                         const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
                         await addToCartAPI(planPayload, isGuest);
