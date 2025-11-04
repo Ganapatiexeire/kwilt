@@ -262,5 +262,27 @@ const setupQuickAddListeners = () => {
 };
 
 
-window.kwiltProductUtils.renderAllProducts = async () => { injectStyles(); const container = document.getElementById('slicksliderproduct'); showLoader(container); const allProducts = await fetchProducts(); _renderProductsToDOM(allProducts); };
-window.kwiltProductUtils.renderProductsByCategory = async () => { injectStyles(); const container = document.getElementById('slicksliderproduct'); showLoader(container); const categorySlug = (() => { const parts = window.location.pathname.split('/').filter(p => p); return parts.length === 2 && parts[0] === 'category' ? parts[1] : null; })(); if (!categorySlug) { console.warn('No category found in URL.'); _renderProductsToDOM([]); return; } const allProducts = await fetchProducts(); const filteredProducts = allProducts.filter(p => p.category && p.category.some(c => c.toLowerCase().replace(/\s+/g, '-') === categorySlug)); _renderProductsToDOM(filteredProducts); };
+window.kwiltProductUtils.renderAllProducts = async() =>{
+  injectStyles();
+  const container = document.getElementById('slicksliderproduct');
+  showLoader(container);
+  const allProducts = await fetchProducts();
+  _renderProductsToDOM(allProducts);
+};
+window.kwiltProductUtils.renderProductsByCategory = async() =>{
+  injectStyles();
+  const container = document.getElementById('slicksliderproduct');
+  showLoader(container);
+  const categorySlug = (() =>{
+    const parts = window.location.pathname.split('/').filter(p =>p);
+    return parts.length === 2 && parts[0] === 'category' ? parts[1] : null;
+  })();
+  if (!categorySlug) {
+    console.warn('No category found in URL.');
+    _renderProductsToDOM([]);
+    return;
+  }
+  const allProducts = await fetchProducts();
+  const filteredProducts = allProducts.filter(p =>p.category && p.category.some(c =>c.toLowerCase().replace(/\s+/g, '-') === categorySlug));
+  _renderProductsToDOM(filteredProducts);
+};
