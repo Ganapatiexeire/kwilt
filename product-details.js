@@ -358,6 +358,20 @@ const setupEventListeners = (userState, productData) => {
                 return;
             }
 
+            // Braze Tracking: Add to Cart Attempted
+            if (window.trackEvent) {
+                const eventProperties = {
+                    product_id: selectedPlan.dataset.sku,
+                    product_name: productData.product_name,
+                    price: parseFloat(selectedPlan.dataset.price),
+                    purchase_option: selectedPlan.dataset.isMember === 'true' ? 'member' : 'non-member',
+                    comprehensive_panel_selected: isPanelSelected,
+                    timestamp: new Date().toISOString()
+                };
+                window.trackEvent('add_to_cart_attempted', eventProperties);
+                console.log('Braze event fired: add_to_cart_attempted', eventProperties);
+            }
+
             try {
                 let successMessage = 'Item added to cart!'; // Default success message
 
@@ -390,6 +404,16 @@ const setupEventListeners = (userState, productData) => {
                         throw new Error(panelResult ? panelResult.message : 'Could not add the Comprehensive Panel to your cart.');
                     }
 
+                    // Braze Tracking: Comprehensive Panel Added
+                    if (window.trackEvent) {
+                        const eventProperties = {
+                            product_id: productData.mega_member.sku,
+                            timestamp: new Date().toISOString()
+                        };
+                        window.trackEvent('comprehensive_panel_added', eventProperties);
+                        console.log('Braze event fired: comprehensive_panel_added', eventProperties);
+                    }
+
                     // 2. Add the main member plan
                     const planPayload = {
                         sku: selectedPlan.dataset.sku,
@@ -414,11 +438,33 @@ const setupEventListeners = (userState, productData) => {
                     }
                 }
 
+                // Braze Tracking: Add to Cart Success
+                if (window.trackEvent) {
+                    const eventProperties = {
+                        product_id: selectedPlan.dataset.sku,
+                        cart_id: getCartId(),
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('add_to_cart_success', eventProperties);
+                    console.log('Braze event fired: add_to_cart_success', eventProperties);
+                }
+
                 // Common success handling
                 window.showToast(successMessage, 'success');
                 window.toggleCart();
 
             } catch (error) {
+                // Braze Tracking: Add to Cart Failed
+                if (window.trackEvent) {
+                    const eventProperties = {
+                        product_id: selectedPlan.dataset.sku,
+                        reason: error.message || 'Unknown error',
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('add_to_cart_failed', eventProperties);
+                    console.log('Braze event fired: add_to_cart_failed', eventProperties);
+                }
+
                 console.error(error); // Keep for developers
                 hideButtonSpinner(addToCartButton);
                 window.showToast('There was a problem adding the item to your cart. Please try again.', 'error'); // User-friendly message
