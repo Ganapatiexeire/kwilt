@@ -92,6 +92,15 @@ const injectStyles = () => {
             color: #333;
             z-index: 1;
         }
+        
+        div#dot-mark:before, .dot-mark:before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            background: #FF816B;
+            display: block;
+            border-radius: 30px;
+        }
     `;
     document.head.appendChild(style);
 };
