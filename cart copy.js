@@ -37,7 +37,9 @@
             let headers = { 'Content-Type': 'application/json', ...getAuthHeaders() };
 
             if (authToken) {
-               
+                // If authenticated, cartId is passed via Authorization header (if needed by backend)
+                // For getcart, if auth token is present, the backend might infer the cart
+                // or expect cartId in headers. Assuming it's handled by auth token for now.
             } else if (cartId) {
                 url = `${url}/${cartId}`;
             } else {
@@ -501,7 +503,7 @@
         setCartLock(true);
         const result = await cartApi.getCart();
         if (result.success) {
-            updateStateFromApi(result.data);
+            await updateStateFromApi(result.data);
             render();
         } else {
             window.showToast('Could not refresh cart. Please try again.', 'error');
@@ -513,10 +515,13 @@
         const action = e.target.dataset.action;
         if (!action) return;
 
+        setCartLock(true); // Disable all cart buttons immediately
+
         const itemId = e.target.dataset.itemId;
         const sku = e.target.dataset.sku;
 
-        switch (action) {
+        try {
+            switch (action) {
             case 'close': toggleCart(false); break;
             case 'increase-qty':
             case 'decrease-qty': {
@@ -541,7 +546,7 @@
                 break;
             }
             case 'remove-item': {
-                const targetButton = e.target.closest('span');
+                const targetButton = e.target.closest('span'); // Target the span for remove button
                 setButtonLoading(targetButton, true);
                 await cartApi.deleteItem(itemId);
                 await refreshCart();
@@ -570,6 +575,17 @@
                         window.showToast(result.message || 'Invalid coupon code. Please try again.', 'error');
                     } else {
                         window.showToast('Coupon applied!', 'success');
+
+                        // Braze Tracking: Coupon Applied
+                        if (window.trackEvent) {
+                            const eventProperties = {
+                                coupon_code: code,
+                                cart_total: cartState.total,
+                                timestamp: new Date().toISOString()
+                            };
+                            window.trackEvent('coupon_applied', eventProperties);
+                            console.log('Braze event fired: coupon_applied', eventProperties);
+                        }
                     }
                     await refreshCart();
                     setButtonLoading(applyButton, false);
@@ -591,6 +607,9 @@
                 break;
             }
         }
+        } finally {
+            setCartLock(false); // Re-enable all cart buttons
+        }
     };
 
     const toggleCart = async (show) => {
@@ -607,6 +626,23 @@
             const result = await cartApi.getCart();
             if (result.success) {
                 await updateStateFromApi(result.data);
+
+                // Braze Tracking: Cart Viewed
+                if (window.trackEvent) {
+                    const eventProperties = {
+                        cart_total: cartState.total,
+                        item_count: cartState.items.length,
+                        cart_items: cartState.items.map(item => ({
+                            product_id: item.sku,
+                            product_name: item.name,
+                            quantity: item.qty,
+                            price: item.price
+                        })),
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('cart_viewed', eventProperties);
+                    console.log('Braze event fired: cart_viewed', eventProperties);
+                }
             }
             cartState.isLoading = false;
             render();
@@ -618,6 +654,7 @@
             overlay.classList.remove('active');
         }
     };
+
     // --- INITIALIZATION ---
     const init = () => {
         injectStyles();
@@ -626,6 +663,25 @@
         document.getElementById('kwilt-cart-overlay').addEventListener('click', () => toggleCart(false));
         document.querySelector('.kwilt-checkout-btn').addEventListener('click', () => {
             if (cartState.items.length && cartState.items.length > 0) {
+
+                // Braze Tracking: Checkout Initiated
+                if (window.trackEvent) {
+                    const eventProperties = {
+                        cart_total: cartState.total,
+                        item_count: cartState.items.length,
+                        cart_items: cartState.items.map(item => ({
+                            product_id: item.sku,
+                            product_name: item.name,
+                            quantity: item.qty,
+                            price: item.price
+                        })),
+                        has_coupon: !!cartState.discount,
+                        timestamp: new Date().toISOString()
+                    };
+                    window.trackEvent('checkout_initiated', eventProperties);
+                    console.log('Braze event fired: checkout_initiated', eventProperties);
+                }
+
                 let url = 'https://kwilt-vuejs-396730550724.us-central1.run.app/checkout'
                 const cartId = localStorage.getItem(CART_ID_KEY) || null
                 if (window.authToken) {
@@ -658,4 +714,4 @@
     } else {
         init();
     }
-})();  
+})();

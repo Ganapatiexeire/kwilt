@@ -158,12 +158,12 @@ const renderComprehensivePanel = (product) => {
         panelPrice.textContent = `$${price}/year`;
     }
 };
-const renderContentAccordions = () => {
-    const accordions = document.querySelectorAll('.accordion-wrapper .accordion-content');
-    accordions.forEach(acc => {
-        acc.innerHTML = '<p>Details not available.</p>';
-    });
-};
+// const renderContentAccordions = () => {
+//     const accordions = document.querySelectorAll('.accordion-wrapper .accordion-content');
+//     accordions.forEach(acc => {
+//         acc.innerHTML = '<p>Details not available.</p>';
+//     });
+// };
 
 
 // --- NEW: Cart Management and API Layer ---
@@ -507,7 +507,7 @@ const initProductDetailPage = async () => {
         renderTags(productData);
         renderPricing(productData);
         renderComprehensivePanel(productData);
-        renderContentAccordions();
+        // renderContentAccordions();
 
         const userState = {
             isLoggedIn: !!(window.authToken),

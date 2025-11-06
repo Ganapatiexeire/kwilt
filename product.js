@@ -77,6 +77,21 @@ const injectStyles = () => {
         .qa-plan-selection { display: flex; align-items: center; }
         .qa-plan-label { font-size: 14px; }
         .qa-plan-price { font-size: 14px; }
+
+        .pl-image { position: relative; }
+        .product-tag.list {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+            z-index: 1;
+        }
     `;
     document.head.appendChild(style);
 };
@@ -116,9 +131,15 @@ const _renderProductsToDOM = (products) => {
         const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.mega_member_installment_price).toFixed(0)}</div></div>`).join('');
         const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.installment_price).toFixed(0)}</div></div>`).join('');
 
+        const labRequiredTag = product.labs_required ? `
+            <div class="product-tag list">
+                <div class="product-tag-style">LAB REQUIRED</div>
+            </div>
+        ` : '';
+
         productElement.innerHTML = `
             <div class="product-wrap">
-                <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29"></a></div>
+                <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29">${labRequiredTag}</a></div>
                 <div class="pl-content">
                     <div class="product-name">${product.product_name}</div>
                     <div class="pl-meta">$${product.lowest_price}/mo</div>
