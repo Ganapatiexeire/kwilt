@@ -522,13 +522,24 @@
         // This is more efficient than adding a listener for every render.
         if (!window.kwiltCartPopupCloser) {
             window.kwiltCartPopupCloser = (e) => {
+                const activePopups = document.querySelectorAll('.kwilt-cart-body .qa-container.active');
+                let clickedInsideActivePopup = false;
+                activePopups.forEach(container => {
+                    if (container.contains(e.target)) {
+                        clickedInsideActivePopup = true;
+                    }
+                });
+
+                if (clickedInsideActivePopup) {
+                    return; // Do not close if click is inside an active popup
+                }
+
+                // If click is outside all active popups, close all popups
                 const allPopups = document.querySelectorAll('.kwilt-cart-body .qa-container');
                 allPopups.forEach(container => {
-                    if (!container.contains(e.target)) {
-                        container.classList.remove('active', 'clicked');
-                        const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
-                        if (scrollContainer) scrollContainer.style.overflowX = 'auto';
-                    }
+                    container.classList.remove('active', 'clicked');
+                    const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
+                    if (scrollContainer) scrollContainer.style.overflowX = 'auto';
                 });
             };
             document.body.addEventListener('click', window.kwiltCartPopupCloser, true);
