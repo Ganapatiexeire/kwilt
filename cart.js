@@ -596,9 +596,9 @@
                 comprehensivePanel.style.display = 'none';
             }
 
-            if (memberAccordion) memberAccordion.addEventListener('click', selectMemberPricing);
-            if (nonMemberAccordion) nonMemberAccordion.addEventListener('click', selectNonMemberPricing);
-            if (comprehensivePanel) comprehensivePanel.addEventListener('click', () => { if (!userIsMember) selectMemberPricing(); });
+            if (memberAccordion) memberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectMemberPricing(); });
+            if (nonMemberAccordion) nonMemberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectNonMemberPricing(); });
+            if (comprehensivePanel) comprehensivePanel.addEventListener('click', (e) => { e.stopPropagation(); if (!userIsMember) selectMemberPricing(); });
 
             allPlanItems.forEach(item => {
                 item.addEventListener('click', async (e) => {
