@@ -435,7 +435,7 @@
                 <img src="${product.thumbnail}" alt="${product.product_name}" class="kwilt-recommended-item-img">
                 <div class="kwilt-recommended-details">
                     <div class="kwilt-recommended-name">${product.product_name}</div>
-                    <div class="kwilt-recommended-price">$${product.lowest_price.toFixed(2)}</div>
+                    <div class="kwilt-recommended-price">$${(+product.lowest_price || 0).toFixed(2)}</div>
                 </div>
                 <div class="qa-container" id="qa-rec-container-${index}">
                     <button class="kwilt-recommended-add-btn">ADD</button>
