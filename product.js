@@ -101,6 +101,11 @@ const injectStyles = () => {
             display: block;
             border-radius: 30px;
         }
+        div#dot-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
     `;
     document.head.appendChild(style);
 };
