@@ -100,7 +100,7 @@ const renderTags = (product) => {
     const labsRequiredTag = document.getElementById('labs-required');
     const bestSellerTag = document.getElementById('best-seller');
     if (labsRequiredTag) {
-        labsRequiredTag.style.display = product.labs_required ? 'block' : 'none';
+        labsRequiredTag.style.display = product.labs_required.length > 0 ? 'block' : 'none';
     }
     if (bestSellerTag) {
         bestSellerTag.style.display = 'none';
