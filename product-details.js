@@ -34,7 +34,7 @@ const injectLoaderStyles = () => {
         .comprehensive-panel.selected .cp-uncheck { display: none; }
         .accordion-item.open .accordion-content { display: block; }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(style);   
 };
 
 var showDetailsLoader = (container) => {
