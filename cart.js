@@ -208,7 +208,7 @@
         style.innerHTML = `
             :root {
                 --kwilt-light-gray: #F5F5F5;
-                --kwilt-text-color: #333;
+                --kwilt-text-color: ##452D0F;
             }
             .kwilt-cart-overlay {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -225,13 +225,13 @@
             .kwilt-cart-overlay.active, .kwilt-cart-sidebar.active { opacity: 1; visibility: visible; }
             .kwilt-cart-sidebar.active { right: 0; }
             .kwilt-cart-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-            .kwilt-cart-header h2 { margin: 0; font-size: 24px; color: var(--kwilt-text-color); }
-            .kwilt-cart-exit { cursor: pointer; text-decoration: none; color: var(--kwilt-text-color); font-weight: bold; }
+            .kwilt-cart-header h2 { margin: 0; font-size: 32px; color: var(--kwilt-text-color); }
+            .kwilt-cart-exit { cursor: pointer; text-decoration: none; color: var(--kwilt-text-color); font-weight: 500; font-size:16px; }
             .kwilt-cart-body { flex-grow: 1; overflow-y: auto; padding: 20px; position: relative; }
             .kwilt-loader-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: transparent; display: flex; justify-content: center; align-items: center; z-index: 10; }
             .kwilt-loader { display: block; width: 48px; height: 48px; border: 5px solid var(--bark); border-bottom-color: transparent; border-radius: 50%; animation: kwilt-spin 1s linear infinite; }
             @keyframes kwilt-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            .kwilt-cart-item { display: flex; margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; position: relative; align-items: flex-start; }
+            .kwilt-cart-item { display: flex; margin-bottom: 20px; background: white; padding: 15px; border-radius: 6px; position: relative; align-items: flex-start; }
             .kwilt-cart-item .kwilt-loader-overlay { border-radius: 8px; }
             .kwilt-cart-item-img { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-right: 15px; flex-shrink: 0; background:var(--body-background-color); }
             .kwilt-cart-item-details { flex-grow: 1; display: flex; flex-direction: column; }
@@ -276,8 +276,9 @@
                 margin-bottom: 15px;
                 background: var(--body-background-color);
                 padding: 10px;
-                border-radius: 16px;
+                border-radius: 8px;
                 border: 1px solid var(--bark);
+                height: 50px;
             }
             .kwilt-discount-input {
                 flex-grow: 1;
@@ -287,7 +288,7 @@
                 padding: 10px;
                 background: var(--body-background-color);
             }
-                .kwilt-discount-btn {
+            .kwilt-discount-btn {
                 /* border: 1px solid var(--bark); */
                 /* background-color: var(--bark); */
                 /* color: white; */
@@ -297,11 +298,13 @@
                 /* font-weight: bold; */
                 position: relative;
                 background: transparent;
+                font-size: 16px;
+                text-decoration: underline;
             }
             .kwilt-discount-btn .kwilt-btn-loader { width: 18px; height: 18px; border: 2px solid white; border-bottom-color: transparent; }
-            .kwilt-summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-            .kwilt-summary-total { font-weight: bold; font-size: 18px; margin-top: 10px; }
-            .kwilt-checkout-btn { display: block; width: 100%; background-color: var(--kwilt-red); color: white; text-align: center; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+            .kwilt-summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size:16px; }
+            .kwilt-summary-total { font-size: 18px; margin-top: 10px; }
+            .kwilt-checkout-btn { display: block; width: 100%; background-color: #FF816B; color: white; text-align: center; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px;color:#452D0F; }
             .kwilt-cart-sidebar button:disabled, .kwilt-cart-sidebar input:disabled { opacity: 0.7; cursor: not-allowed; }
             .kwilt-spinner-small { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-bottom-color: transparent; border-radius: 50%; animation: kwilt-spin 1s linear infinite; vertical-align: middle; }
             .kwilt-applied-coupon {
@@ -337,6 +340,7 @@
             .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
             .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
             .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
+            .kwilt-summary-total-price{font-size:24px; font-weight:500;}
         `;
         document.head.appendChild(style);
     };
@@ -409,10 +413,10 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.price).toFixed(2)}/mo</p>
-                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(2)} for a ${item.plan_name} supply</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
                 <div class="kwilt-cart-item-footer">
-                    <span class="kwilt-cart-item-price">$${parseFloat(item.price).toFixed(2)}</span>
+                    <span class="kwilt-cart-item-price">$${parseFloat(item.price).toFixed(0)}</span>
                     <div class="kwilt-quantity-selector">
                         <button class="kwilt-quantity-btn" data-action="decrease-qty" data-item-id="${item.item_id}">-</button>
                         <span class="kwilt-quantity-value">${item.qty}</span>
@@ -426,8 +430,8 @@
         const childOptions = product.child_options || [];
         const megaMember = product.mega_member;
 
-        const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.mega_member_installment_price).toFixed(0)}</div></div>`).join('');
-        const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.installment_price).toFixed(0)}</div></div>`).join('');
+        const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}</div></div>`).join('');
+        const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}</div></div>`).join('');
 
         return `
         <div>
@@ -462,9 +466,9 @@
 
     const renderSummary = () => `
         <div class="kwilt-summary-row"><span>Subtotal:</span><span>$${cartState.subtotal.toFixed(2)}</span></div>
-        <div class="kwilt-summary-row"><span>Shipping:</span><span>${cartState.shipping === 0 ? 'FREE' : '$' + cartState.shipping.toFixed(2)}</span></div>
+        <div class="kwilt-summary-row"><span>FREE SHIPPING:</span><span>${cartState.shipping === 0 ? '$0.00': '$' + cartState.shipping.toFixed(2)}</span></div>
         ${cartState.discount ? `<div class="kwilt-summary-row"><span>Discount (${cartState.discount.code}):</span><span>-$${Math.abs(cartState.discount.amount).toFixed(2)}</span></div>` : ''}
-        <div class="kwilt-summary-row kwilt-summary-total"><span>Total:</span><span>$${cartState.total.toFixed(2)}</span></div>`;
+        <div class="kwilt-summary-row kwilt-summary-total"><span>Total:</span><span class="kwilt-summary-total-price">$${cartState.total.toFixed(2)}</span></div>`;
 
     const _getCouponSectionHtml = () => {
         let couponHtml = `
