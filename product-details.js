@@ -139,7 +139,7 @@ const renderPlanOptions = (container, options, priceKey, isMember) => {
             <div class="plan-radio"></div>
             <div class="plan-details">
                 <div class="plan-label">${label}</div>
-                <div class="plan-price">$${price}</div>
+                <div class="plan-price">$${price}/month</div>
             </div>
         `;
         planItem.dataset.sku = option.sku;
