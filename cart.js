@@ -208,7 +208,7 @@
         style.innerHTML = `
             :root {
                 --kwilt-light-gray: #F5F5F5;
-                --kwilt-text-color: ##452D0F;
+                --kwilt-text-color: #452D0F;
             }
             .kwilt-cart-overlay {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -266,7 +266,8 @@
                 background-color: #F9F6F4;
                 padding: 16px;
                 border-radius: 12px;
-                margin-bottom: 16px;
+                margin-right: 16px; /* Space between items */
+                min-width: 350px; /* Increased width for content */
             }
 
             .kwilt-cart-footer { padding: 20px; border-top: 1px solid #eee; background:white; box-shadow: -5px 0 15px rgba(0,0,0,0.1)}
@@ -369,8 +370,28 @@
                 font-weight: 500;
                 color: #452D0F;
             }
-            .kwilt-summary-total-price{font-size:24px; font-weight:500;}
-        `;
+            /* Quick Add Popup Styles */
+            .kwilt-recommended-item .qa-container { position: relative; }
+            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 100%; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; }
+            .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
+
+            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #e0dcdc; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
+            .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; padding: 12px; cursor: pointer; }
+            .kwilt-recommended-item .qa-header-content { display: flex; align-items: center; flex-grow: 1; }
+            .kwilt-recommended-item .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452d0f; border-radius: 50%; margin-right: 12px; flex-shrink: 0; position: relative; }
+            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #452d0f; }
+            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio::after, .kwilt-recommended-item .qa-panel.selected .qa-radio::after, .kwilt-recommended-item .qa-plan-item.selected .qa-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: white; border-radius: 50%; transform: translate(-50%, -50%); }
+            .kwilt-recommended-item .qa-accordion-title, .kwilt-recommended-item .qa-panel-title { font-weight: 500; text-transform: uppercase; font-size: 14px; color: #333; }
+            .kwilt-recommended-item .qa-accordion-price, .kwilt-recommended-item .qa-panel-price { font-size: 14px; color: #333; }
+            .kwilt-recommended-item .qa-plan-list { display: none; padding: 5px 10px 10px; border-top: 1px solid #e0dcdc; margin-top: 10px; }
+            .kwilt-recommended-item .qa-accordion.selected .qa-plan-list { display: block; }
+            .kwilt-recommended-item .qa-plan-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer; border-radius: 4px; }
+            .kwilt-recommended-item .qa-plan-item:hover { background-color: #ede3e0; }
+            .kwilt-recommended-item .qa-plan-selection { display: flex; align-items: center; }
+            .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
+            .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
+            .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
+            .kwilt-summary-total-price{font-size:24px; font-weight:500;}`
         document.head.appendChild(style);
     };
 
@@ -456,6 +477,12 @@
         </div>`;
 
     const renderRecommendedItem = (product, index) => {
+        const childOptions = product.child_options || [];
+        const megaMember = product.mega_member;
+
+        const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}</div></div>`).join('');
+        const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}</div></div>`).join('');
+
         const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
         const price = defaultOption ? defaultOption.installment_price : product.lowest_price;
         const supply_text = defaultOption ? `${defaultOption.frequency_count} ${defaultOption.frequency_unit} supply` : '';
@@ -466,7 +493,26 @@
                 <div class="kwilt-recommended-item-content">
                     <div class="kwilt-recommended-item-main">
                         <div class="kwilt-recommended-name-new">${product.product_name}</div>
-                        <button class="kwilt-recommended-add-btn-new" data-sku="${product.sku}">ADD</button>
+                        
+                        <div class="qa-container" id="qa-rec-container-${index}">
+                            <button class="kwilt-recommended-add-btn-new" data-sku="${product.sku}">ADD</button>
+                            <div class="qa-popup">
+                                <div class="qa-accordion" id="qa-rec-member-pricing-accord">
+                                    <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Member Pricing</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div></div>
+                                    <div class="qa-plan-list">${memberPlanItems}</div>
+                                </div>
+                                <div class="qa-accordion" id="qa-rec-non-member-accord">
+                                    <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Non-Member</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div></div>
+                                    <div class="qa-plan-list">${nonMemberPlanItems}</div>
+                                </div>
+                                ${megaMember ? `
+                                <div class="qa-panel" id="qa-rec-comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
+                                    <div class="qa-panel-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-panel-title">Comprehensive Panel</div></div><div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div></div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
                     </div>
                     <div class="kwilt-recommended-item-sub">
                         <div class="kwilt-recommended-price-desc">$${parseFloat(price).toFixed(0)} for a ${supply_text}</div>
@@ -533,42 +579,182 @@
     const originalButtonTexts = new Map();
 
     const setupRecommendedItemListeners = () => {
-        const cartBody = document.getElementById('kwilt-cart-body');
-        if (!cartBody || cartBody.dataset.listenerAttached) return; // Prevent multiple listeners
+        const containers = document.querySelectorAll('.kwilt-cart-body .qa-container');
 
-        // Use a single delegated event listener for all add buttons
-        cartBody.addEventListener('click', async (e) => {
-            if (e.target && e.target.classList.contains('kwilt-recommended-add-btn-new')) {
-                const addButton = e.target;
-                const sku = addButton.dataset.sku;
-                
-                const product = cartState.recommended.find(p => p.sku === sku);
-                if (!product) return;
+        // Using a single, delegated listener on the body to handle closing popups
+        // This is more efficient than adding a listener for every render.
+        if (!window.kwiltCartPopupCloser) {
+            window.kwiltCartPopupCloser = (e) => {
+                const activePopups = document.querySelectorAll('.kwilt-cart-body .qa-container.active');
+                let clickedInsideActivePopup = false;
+                activePopups.forEach(container => {
+                    if (container.contains(e.target)) {
+                        clickedInsideActivePopup = true;
+                    }
+                });
 
-                const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
-                if (!defaultOption) {
-                    window.showToast('This product cannot be added at this time.', 'error');
-                    return;
+                if (clickedInsideActivePopup) {
+                    return; // Do not close if click is inside an active popup
                 }
 
-                const payload = {
-                    sku: product.sku,
-                    __co: [{ "__oid": parseInt(defaultOption.__oid), "__ov": parseInt(defaultOption.__vid) }]
-                };
+                // If click is outside all active popups, close all popups
+                const allPopups = document.querySelectorAll('.kwilt-cart-body .qa-container');
+                allPopups.forEach(container => {
+                    const popup = container.querySelector('.qa-popup');
+                    if (popup && popup.getAttribute('data-kwilt-fixed') === 'true') {
+                        popup.style.position = '';
+                        popup.style.top = '';
+                        popup.style.left = '';
+                        popup.style.zIndex = '';
+                        popup.removeAttribute('data-kwilt-fixed');
+                    }
+                    container.classList.remove('active', 'clicked');
+                });
+            };
+            document.body.addEventListener('click', window.kwiltCartPopupCloser, true);
+        }
 
-                setButtonLoading(addButton, true);
 
-                try {
-                    await cartApi.addItem(payload);
-                    await refreshCart();
-                    window.showToast('Item added to cart!', 'success');
-                } catch (error) {
-                    window.showToast(error.message || 'There was a problem adding the item to your cart.', 'error');
-                    setButtonLoading(addButton, false); // Restore button on error
+        containers.forEach(container => {
+            const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new'); // Changed to new class
+            const popup = container.querySelector('.qa-popup');
+            const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
+
+            const showPopup = () => {
+                if (container.classList.contains('clicked')) return;
+
+                const recommendedItem = container.closest('.kwilt-recommended-item');
+                if (recommendedItem && popup) {
+                    popup.style.width = `${recommendedItem.offsetWidth}px`;
+
+                    // Temporarily make visible to calculate dimensions
+                    popup.style.visibility = 'hidden';
+                    container.classList.add('active'); // Add active class to make it display: block
+                    
+                    const rect = popup.getBoundingClientRect();
+                    const scrollRect = scrollContainer ? scrollContainer.getBoundingClientRect() : { top: 0, left: 0, right: window.innerWidth }; // Handle case where no scrollContainer
+                    const btnRect = quickAddBtn.getBoundingClientRect();
+
+                    // Reset visibility
+                    popup.style.visibility = '';
+
+                    // Calculate where the popup's top and left would be if it were absolutely positioned
+                    // relative to the viewport, assuming its default bottom:100% and right:0
+                    const popupAbsoluteTop = btnRect.top - rect.height; // Top of button minus popup height
+                    const popupAbsoluteLeft = btnRect.right - rect.width; // Right of button minus popup width
+
+                    // Check if the popup would be clipped vertically or horizontally
+                    if (popupAbsoluteTop < scrollRect.top || popupAbsoluteLeft < scrollRect.left) {
+                        popup.style.position = 'fixed';
+                        // Position the popup relative to the button, ensuring it's not clipped
+                        popup.style.top = `${btnRect.top - rect.height - 10}px`; // 10px padding above button
+                        popup.style.left = `${btnRect.right - rect.width}px`; // Align right edge with button's right edge
+                        popup.style.zIndex = '10001';
+                        popup.setAttribute('data-kwilt-fixed', 'true');
+                    }
                 }
+                container.classList.add('active');
+            };
+
+            const hidePopup = () => {
+                if (!container.classList.contains('clicked')) {
+                    if (popup.getAttribute('data-kwilt-fixed') === 'true') {
+                        popup.style.position = '';
+                        popup.style.top = '';
+                        popup.style.left = '';
+                        popup.style.zIndex = '';
+                        popup.removeAttribute('data-kwilt-fixed');
+                    }
+                    container.classList.remove('active');
+                    // Removed: if (scrollContainer) scrollContainer.style.overflowX = 'auto'; // Remove this as it caused jerking
+                }
+            };
+
+            container.addEventListener('mouseenter', showPopup);
+            container.addEventListener('mouseleave', hidePopup);
+
+            quickAddBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                container.classList.toggle('clicked');
+                if (container.classList.contains('clicked')) {
+                    showPopup();
+                } else {
+                    hidePopup();
+                }
+            });
+
+            const memberAccordion = container.querySelector('#qa-rec-member-pricing-accord');
+            const nonMemberAccordion = container.querySelector('#qa-rec-non-member-accord');
+            const comprehensivePanel = container.querySelector('#qa-rec-comprehensive-panel');
+            const allPlanItems = container.querySelectorAll('.qa-plan-item');
+
+            const userIsMember = !!(localStorage.getItem('atkn') && window.memerShip);
+
+            const selectMemberPricing = () => {
+                if (memberAccordion) memberAccordion.classList.add('selected');
+                if (nonMemberAccordion) nonMemberAccordion.classList.remove('selected');
+                if (comprehensivePanel && !userIsMember) comprehensivePanel.classList.add('selected');
+            };
+
+            const selectNonMemberPricing = () => {
+                if (nonMemberAccordion) nonMemberAccordion.classList.add('selected');
+                if (memberAccordion) memberAccordion.classList.remove('selected');
+                if (comprehensivePanel) comprehensivePanel.classList.remove('selected');
+            };
+
+            if (userIsMember && comprehensivePanel) {
+                comprehensivePanel.style.display = 'none';
             }
+
+            if (memberAccordion) memberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectMemberPricing(); });
+            if (nonMemberAccordion) nonMemberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectNonMemberPricing(); });
+            if (comprehensivePanel) comprehensivePanel.addEventListener('click', (e) => { e.stopPropagation(); if (!userIsMember) selectMemberPricing(); });
+
+            allPlanItems.forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const parentAccordion = item.closest('.qa-accordion');
+                    if (!parentAccordion) return;
+
+                    container.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    if (parentAccordion.id.includes('member')) selectMemberPricing();
+                    else selectNonMemberPricing();
+
+                    setButtonLoading(quickAddBtn, true, '<span class="button-spinner"></span>');
+                    const isGuest = !localStorage.getItem('atkn');
+                    const isPanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
+
+                    try {
+                        let successMessage = 'Item added to cart!';
+                        const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }] };
+
+                        if (userIsMember) {
+                            await cartApi.addItem(planPayload);
+                        } else if (isPanelSelected) {
+                            successMessage = 'Items added to cart!';
+                            const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }] };
+                            await cartApi.addItem(panelPayload);
+                            await cartApi.addItem(planPayload);
+                        } else {
+                            await cartApi.addItem(planPayload);
+                        }
+                        
+                        await refreshCart();
+                        window.showToast(successMessage, 'success');
+
+                    } catch (error) {
+                        window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
+                    } finally {
+                        setButtonLoading(quickAddBtn, false);
+                        // Text is not changed back, it stays 'ADD'
+                        container.classList.remove('active', 'clicked');
+                        // Removed: if (scrollContainer) scrollContainer.style.overflowX = 'auto';
+                    }
+                });
+            });
         });
-        cartBody.dataset.listenerAttached = 'true';
     };
 
     const setButtonLoading = (buttonElement, loading, loaderHtml = '<span class="kwilt-spinner-small"></span>') => {
