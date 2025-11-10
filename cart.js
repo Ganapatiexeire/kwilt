@@ -245,7 +245,7 @@
             .kwilt-quantity-selector { display: flex; align-items: center; border: 1px solid #ccc; border-radius: 4px; }
             .kwilt-quantity-btn { background: none; border: none; cursor: pointer; padding: 5px 10px; font-size: 18px; }
             .kwilt-quantity-value { padding: 0 10px; }
-            .kwilt-recommended-section h3 { font-size: 18px; margin-bottom: 15px; }
+            .kwilt-recommended-section h3 { font-size: 20px; margin-bottom: 15px; font-weight:400; }
             .kwilt-recommended-scroll-container {
                 display: flex;
                 overflow-x: auto;
@@ -260,16 +260,15 @@
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
-            .kwilt-recommended-item { flex: 0 0 auto; margin-right: 15px; display: flex; align-items: center; background: white; padding: 15px; border-radius: 8px; min-width:300px; }
-            .kwilt-recommended-item-img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-right: 15px; }
-            .kwilt-recommended-details { flex-grow: 1; text-align: left; }
-            .kwilt-recommended-name {
-                font-weight: normal;
-                font-size: 14px;
-                margin-bottom: 10px;
+            .kwilt-recommended-item {
+                display: flex;
+                align-items: center;
+                background-color: #F9F6F4;
+                padding: 16px;
+                border-radius: 12px;
+                margin-bottom: 16px;
             }
-            .kwilt-recommended-plan, .kwilt-recommended-price { font-size: 14px; color: #666; }
-            .kwilt-recommended-add-btn { background-color: white; color: var(--bark); border: 1px solid #ddd; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 10px; }
+
             .kwilt-cart-footer { padding: 20px; border-top: 1px solid #eee; background:white; box-shadow: -5px 0 15px rgba(0,0,0,0.1)}
             .kwilt-discount-section {
                 display: flex;
@@ -304,7 +303,7 @@
             .kwilt-discount-btn .kwilt-btn-loader { width: 18px; height: 18px; border: 2px solid white; border-bottom-color: transparent; }
             .kwilt-summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size:16px; }
             .kwilt-summary-total { font-size: 18px; margin-top: 10px; }
-            .kwilt-checkout-btn { display: block; width: 100%; background-color: #FF816B; color: white; text-align: center; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px;color:#452D0F; }
+            .kwilt-checkout-btn { display: block; width: 100%; background-color: #FF816B; color: white; text-align: center; padding: 15px; border: none; border-radius: 4px; font-size: 18px; font-weight: 400; cursor: pointer; margin-top: 20px;color:#452D0F; }
             .kwilt-cart-sidebar button:disabled, .kwilt-cart-sidebar input:disabled { opacity: 0.7; cursor: not-allowed; }
             .kwilt-spinner-small { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-bottom-color: transparent; border-radius: 50%; animation: kwilt-spin 1s linear infinite; vertical-align: middle; }
             .kwilt-applied-coupon {
@@ -319,27 +318,57 @@
             }
             .kwilt-applied-coupon-remove { cursor: pointer; font-size: 18px; margin-left: 10px; background: none; border: none; color: var(--kwilt-text-color); }
             
-            /* Quick Add Popup Styles */
-            .kwilt-recommended-item .qa-container { position: relative; }
-            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 100%; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; }
-            .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
-            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #e0dcdc; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
-            .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; padding: 12px; cursor: pointer; }
-            .kwilt-recommended-item .qa-header-content { display: flex; align-items: center; flex-grow: 1; }
-            .kwilt-recommended-item .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452d0f; border-radius: 50%; margin-right: 12px; flex-shrink: 0; position: relative; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #452d0f; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio::after, .kwilt-recommended-item .qa-panel.selected .qa-radio::after, .kwilt-recommended-item .qa-plan-item.selected .qa-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: white; border-radius: 50%; transform: translate(-50%, -50%); }
-            .kwilt-recommended-item .qa-accordion-title, .kwilt-recommended-item .qa-panel-title { font-weight: 500; text-transform: uppercase; font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-accordion-price, .kwilt-recommended-item .qa-panel-price { font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-plan-list { display: none; padding: 5px 10px 10px; border-top: 1px solid #e0dcdc; margin-top: 10px; }
-            .kwilt-recommended-item .qa-accordion.selected .qa-plan-list { display: block; }
-            .kwilt-recommended-item .qa-plan-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer; border-radius: 4px; }
-            .kwilt-recommended-item .qa-plan-item:hover { background-color: #ede3e0; }
-            .kwilt-recommended-item .qa-plan-selection { display: flex; align-items: center; }
-            .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
-            .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
+            .kwilt-recommended-item-img-new {
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-right: 16px;
+                background-color: #F0EBE8;
+                flex-shrink: 0;
+            }
+            .kwilt-recommended-item-content {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .kwilt-recommended-item-main {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 8px;
+            }
+            .kwilt-recommended-name-new {
+                font-size: 16px;
+                font-weight: 500;
+                color: #452D0F;
+            }
+            .kwilt-recommended-add-btn-new {
+                background-color: #FFFFFF;
+                color: #452D0F;
+                border: 1px solid #452D0F;
+                border-radius: 6px;
+                padding: 8px 24px;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 14px;
+                white-space: nowrap;
+            }
+            .kwilt-recommended-item-sub {
+                text-align: left;
+            }
+            .kwilt-recommended-price-desc {
+                font-size: 14px;
+                color: #6c757d;
+                margin-bottom: 4px;
+            }
+            .kwilt-recommended-price-new {
+                font-size: 14px;
+                font-weight: 500;
+                color: #452D0F;
+            }
             .kwilt-summary-total-price{font-size:24px; font-weight:500;}
         `;
         document.head.appendChild(style);
@@ -427,39 +456,23 @@
         </div>`;
 
     const renderRecommendedItem = (product, index) => {
-        const childOptions = product.child_options || [];
-        const megaMember = product.mega_member;
-
-        const memberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}</div></div>`).join('');
-        const nonMemberPlanItems = childOptions.map(o => `<div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}"><div class="qa-plan-selection"><div class="qa-radio"></div><div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div></div><div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}</div></div>`).join('');
+        const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
+        const price = defaultOption ? defaultOption.installment_price : product.lowest_price;
+        const supply_text = defaultOption ? `${defaultOption.frequency_count} ${defaultOption.frequency_unit} supply` : '';
 
         return `
-        <div>
             <div class="kwilt-recommended-item" data-product-sku="${product.sku}">
-                <img src="${product.thumbnail}" alt="${product.product_name}" class="kwilt-recommended-item-img">
-                <div class="kwilt-recommended-details">
-                    <div class="kwilt-recommended-name">${product.product_name}</div>
-                    <div class="kwilt-recommended-price">$${(+product.lowest_price || 0).toFixed(2)}</div>
-                </div>
-                <div class="qa-container" id="qa-rec-container-${index}">
-                    <button class="kwilt-recommended-add-btn">ADD</button>
-                    <div class="qa-popup">
-                        <div class="qa-accordion" id="qa-rec-member-pricing-accord">
-                            <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Member Pricing</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div></div>
-                            <div class="qa-plan-list">${memberPlanItems}</div>
-                        </div>
-                        <div class="qa-accordion" id="qa-rec-non-member-accord">
-                            <div class="qa-accordion-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-accordion-title">Non-Member</div></div><div class="qa-accordion-price">from $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div></div>
-                            <div class="qa-plan-list">${nonMemberPlanItems}</div>
-                        </div>
-                        ${megaMember ? `
-                        <div class="qa-panel" id="qa-rec-comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
-                            <div class="qa-panel-header"><div class="qa-header-content"><div class="qa-radio"></div><div class="qa-panel-title">Comprehensive Panel</div></div><div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div></div>
-                        </div>
-                        ` : ''}
+                <img src="${product.thumbnail}" alt="${product.product_name}" class="kwilt-recommended-item-img-new">
+                <div class="kwilt-recommended-item-content">
+                    <div class="kwilt-recommended-item-main">
+                        <div class="kwilt-recommended-name-new">${product.product_name}</div>
+                        <button class="kwilt-recommended-add-btn-new" data-sku="${product.sku}">ADD</button>
+                    </div>
+                    <div class="kwilt-recommended-item-sub">
+                        <div class="kwilt-recommended-price-desc">$${parseFloat(price).toFixed(0)} for a ${supply_text}</div>
+                        <div class="kwilt-recommended-price-new">$${parseFloat(price).toFixed(0)}</div>
                     </div>
                 </div>
-            </div>
             </div>
         `;
     };
@@ -520,146 +533,42 @@
     const originalButtonTexts = new Map();
 
     const setupRecommendedItemListeners = () => {
-        const containers = document.querySelectorAll('.kwilt-cart-body .qa-container');
+        const cartBody = document.getElementById('kwilt-cart-body');
+        if (!cartBody || cartBody.dataset.listenerAttached) return; // Prevent multiple listeners
 
-        // Using a single, delegated listener on the body to handle closing popups
-        // This is more efficient than adding a listener for every render.
-        if (!window.kwiltCartPopupCloser) {
-            window.kwiltCartPopupCloser = (e) => {
-                const activePopups = document.querySelectorAll('.kwilt-cart-body .qa-container.active');
-                let clickedInsideActivePopup = false;
-                activePopups.forEach(container => {
-                    if (container.contains(e.target)) {
-                        clickedInsideActivePopup = true;
-                    }
-                });
+        // Use a single delegated event listener for all add buttons
+        cartBody.addEventListener('click', async (e) => {
+            if (e.target && e.target.classList.contains('kwilt-recommended-add-btn-new')) {
+                const addButton = e.target;
+                const sku = addButton.dataset.sku;
+                
+                const product = cartState.recommended.find(p => p.sku === sku);
+                if (!product) return;
 
-                if (clickedInsideActivePopup) {
-                    return; // Do not close if click is inside an active popup
+                const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
+                if (!defaultOption) {
+                    window.showToast('This product cannot be added at this time.', 'error');
+                    return;
                 }
 
-                // If click is outside all active popups, close all popups
-                const allPopups = document.querySelectorAll('.kwilt-cart-body .qa-container');
-                allPopups.forEach(container => {
-                    container.classList.remove('active', 'clicked');
-                    const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
-                    if (scrollContainer) scrollContainer.style.overflowX = 'auto';
-                });
-            };
-            document.body.addEventListener('click', window.kwiltCartPopupCloser, true);
-        }
+                const payload = {
+                    sku: product.sku,
+                    __co: [{ "__oid": parseInt(defaultOption.__oid), "__ov": parseInt(defaultOption.__vid) }]
+                };
 
+                setButtonLoading(addButton, true);
 
-        containers.forEach(container => {
-            const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn');
-            const popup = container.querySelector('.qa-popup');
-            const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
-
-            const showPopup = () => {
-                if (container.classList.contains('clicked')) return;
-                // Set overflow to visible to prevent clipping
-                if (scrollContainer) scrollContainer.style.overflowX = 'visible';
-                const recommendedItem = container.closest('.kwilt-recommended-item');
-                if (recommendedItem && popup) {
-                    // Set width to match the parent item
-                    popup.style.width = `${recommendedItem.offsetWidth}px`;
+                try {
+                    await cartApi.addItem(payload);
+                    await refreshCart();
+                    window.showToast('Item added to cart!', 'success');
+                } catch (error) {
+                    window.showToast(error.message || 'There was a problem adding the item to your cart.', 'error');
+                    setButtonLoading(addButton, false); // Restore button on error
                 }
-                container.classList.add('active');
-            };
-
-            const hidePopup = () => {
-                if (!container.classList.contains('clicked')) {
-                    container.classList.remove('active');
-                    // Reset overflow
-                    if (scrollContainer) scrollContainer.style.overflowX = 'auto';
-                }
-            };
-
-            container.addEventListener('mouseenter', showPopup);
-            container.addEventListener('mouseleave', hidePopup);
-
-            quickAddBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                container.classList.toggle('clicked');
-                if (container.classList.contains('clicked')) {
-                    showPopup();
-                } else {
-                    hidePopup();
-                }
-            });
-
-            const memberAccordion = container.querySelector('#qa-rec-member-pricing-accord');
-            const nonMemberAccordion = container.querySelector('#qa-rec-non-member-accord');
-            const comprehensivePanel = container.querySelector('#qa-rec-comprehensive-panel');
-            const allPlanItems = container.querySelectorAll('.qa-plan-item');
-
-            const userIsMember = !!(localStorage.getItem('atkn') && window.memerShip);
-
-            const selectMemberPricing = () => {
-                if (memberAccordion) memberAccordion.classList.add('selected');
-                if (nonMemberAccordion) nonMemberAccordion.classList.remove('selected');
-                if (comprehensivePanel && !userIsMember) comprehensivePanel.classList.add('selected');
-            };
-
-            const selectNonMemberPricing = () => {
-                if (nonMemberAccordion) nonMemberAccordion.classList.add('selected');
-                if (memberAccordion) memberAccordion.classList.remove('selected');
-                if (comprehensivePanel) comprehensivePanel.classList.remove('selected');
-            };
-
-            if (userIsMember && comprehensivePanel) {
-                comprehensivePanel.style.display = 'none';
             }
-
-            if (memberAccordion) memberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectMemberPricing(); });
-            if (nonMemberAccordion) nonMemberAccordion.addEventListener('click', (e) => { e.stopPropagation(); selectNonMemberPricing(); });
-            if (comprehensivePanel) comprehensivePanel.addEventListener('click', (e) => { e.stopPropagation(); if (!userIsMember) selectMemberPricing(); });
-
-            allPlanItems.forEach(item => {
-                item.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const parentAccordion = item.closest('.qa-accordion');
-                    if (!parentAccordion) return;
-
-                    container.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
-                    item.classList.add('selected');
-
-                    if (parentAccordion.id.includes('member')) selectMemberPricing();
-                    else selectNonMemberPricing();
-
-                    setButtonLoading(quickAddBtn, true, '<span class="button-spinner"></span>');
-                    const isGuest = !localStorage.getItem('atkn');
-                    const isPanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
-
-                    try {
-                        let successMessage = 'Item added to cart!';
-                        const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }] };
-
-                        if (userIsMember) {
-                            await cartApi.addItem(planPayload);
-                        } else if (isPanelSelected) {
-                            successMessage = 'Items added to cart!';
-                            const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }] };
-                            await cartApi.addItem(panelPayload);
-                            await cartApi.addItem(planPayload);
-                        } else {
-                            await cartApi.addItem(planPayload);
-                        }
-                        
-                        await refreshCart();
-                        window.showToast(successMessage, 'success');
-
-                    } catch (error) {
-                        window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
-                    } finally {
-                        setButtonLoading(quickAddBtn, false);
-                        // Text is not changed back, it stays 'ADD'
-                        container.classList.remove('active', 'clicked');
-                        if (scrollContainer) scrollContainer.style.overflowX = 'auto';
-                    }
-                });
-            });
         });
+        cartBody.dataset.listenerAttached = 'true';
     };
 
     const setButtonLoading = (buttonElement, loading, loaderHtml = '<span class="kwilt-spinner-small"></span>') => {
