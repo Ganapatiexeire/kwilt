@@ -372,7 +372,7 @@
             }
             /* Quick Add Popup Styles */
             .kwilt-recommended-item .qa-container { position: relative; }
-            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 100%; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; }
+            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 0; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; height: fit-content; }
             .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
             .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #e0dcdc; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
@@ -603,7 +603,7 @@
                     const popup = container.querySelector('.qa-popup');
                     if (popup && popup.getAttribute('data-kwilt-fixed') === 'true') {
                         popup.style.position = '';
-                        popup.style.top = '';
+                        popup.style.bottom = '';
                         popup.style.left = '';
                         popup.style.zIndex = '';
                         popup.removeAttribute('data-kwilt-fixed');
@@ -647,8 +647,8 @@
                     if (popupAbsoluteTop < scrollRect.top || popupAbsoluteLeft < scrollRect.left) {
                         popup.style.position = 'fixed';
                         // Position the popup relative to the button, ensuring it's not clipped
-                        popup.style.top = `${btnRect.top - rect.height - 10}px`; // 10px padding above button
-                        popup.style.left = `${btnRect.right - rect.width}px`; // Align right edge with button's right edge
+                        popup.style.bottom = `${window.innerHeight - btnRect.top}px`; // Align popup bottom with button top
+                        popup.style.left = `${btnRect.right - popup.offsetWidth}px`; // Align right edge with button's right edge
                         popup.style.zIndex = '10001';
                         popup.setAttribute('data-kwilt-fixed', 'true');
                     }
@@ -660,13 +660,12 @@
                 if (!container.classList.contains('clicked')) {
                     if (popup.getAttribute('data-kwilt-fixed') === 'true') {
                         popup.style.position = '';
-                        popup.style.top = '';
+                        popup.style.bottom = '';
                         popup.style.left = '';
                         popup.style.zIndex = '';
                         popup.removeAttribute('data-kwilt-fixed');
                     }
                     container.classList.remove('active');
-                    // Removed: if (scrollContainer) scrollContainer.style.overflowX = 'auto'; // Remove this as it caused jerking
                 }
             };
 
@@ -722,6 +721,8 @@
                     if (parentAccordion.id.includes('member')) selectMemberPricing();
                     else selectNonMemberPricing();
 
+                    container.classList.remove('active', 'clicked'); // Close popup
+                    setCartLock(true); // Lock cart actions
                     setButtonLoading(quickAddBtn, true, '<span class="button-spinner"></span>');
                     const isGuest = !localStorage.getItem('atkn');
                     const isPanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
@@ -748,9 +749,7 @@
                         window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
                     } finally {
                         setButtonLoading(quickAddBtn, false);
-                        // Text is not changed back, it stays 'ADD'
-                        container.classList.remove('active', 'clicked');
-                        // Removed: if (scrollContainer) scrollContainer.style.overflowX = 'auto';
+                        setCartLock(false); // Unlock cart actions
                     }
                 });
             });
