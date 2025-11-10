@@ -189,10 +189,15 @@ const _renderProductsToDOM = (products) => {
         window.trackEvent('product_listing_viewed', eventProperties);
         console.log('Braze event fired: product_listing_viewed', eventProperties);
     }
-    const categoryFilterElement = document.querySelector('.category-filter-pl');
-    if (categoryFilterElement) {
-        categoryFilterElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        window.scrollBy(0, -300); // Adjust this value as needed for desired offset
+    if (container) {
+        const offset = 200;
+        const elementPosition = container.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
     }
 };
 
