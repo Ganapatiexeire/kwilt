@@ -131,9 +131,32 @@ const fetchProducts = async () => {
 const _renderProductsToDOM = (products) => {
     const container = document.getElementById('slicksliderproduct');
     if (!container) { console.error('Product container #slicksliderproduct not found.'); return; }
+
+    const offset = 200;
+    const elementPosition = container.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+
     container.innerHTML = '';
 
-    if (!products || products.length === 0) { container.innerHTML = '<p>No products found.</p>'; return; }
+    if (!products || products.length === 0) {
+        container.innerHTML = '<p>No products found.</p>';
+        // Braze Tracking for empty product view
+        if (window.trackEvent) {
+            const eventProperties = {
+                total_products: 0,
+                categories: [],
+                timestamp: new Date().toISOString()
+            };
+            window.trackEvent('product_listing_viewed', eventProperties);
+            console.log('Braze event fired: product_listing_viewed (empty)', eventProperties);
+        }
+        return;
+    }
 
     products.forEach((product, index) => {
         const productElement = document.createElement('div');
@@ -188,16 +211,6 @@ const _renderProductsToDOM = (products) => {
         };
         window.trackEvent('product_listing_viewed', eventProperties);
         console.log('Braze event fired: product_listing_viewed', eventProperties);
-    }
-    if (container) {
-        const offset = 200;
-        const elementPosition = container.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - offset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-        });
     }
 };
 
