@@ -177,7 +177,7 @@ const _renderProductsToDOM = (products) => {
                 <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29">${labRequiredTag}</a></div>
                 <div class="pl-content">
                     <div class="product-name">${product.product_name}</div>
-                    <div class="pl-meta">$${product.prescription}</div>
+                    <div class="pl-meta">${product.prescription}</div>
                     <div class="pl-meta">$${(+product.lowest_price || 0).toFixed(0)}/mo</div>
                     <div class="qa-container" id="qa-container-${index}">
                         <button class="button add-tocart-button w-button">ADD TO CART</button>
