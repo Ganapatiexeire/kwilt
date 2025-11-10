@@ -189,7 +189,7 @@ const _renderProductsToDOM = (products) => {
         window.trackEvent('product_listing_viewed', eventProperties);
         console.log('Braze event fired: product_listing_viewed', eventProperties);
     }
-    container.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.category-filter-pl').scrollIntoView({ behavior: 'smooth' });
 };
 
 const setupQuickAddListeners = () => {
