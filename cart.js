@@ -392,16 +392,8 @@
             .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
             .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
             .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
-            .kwilt-summary-total-price{font-size:24px; font-weight:500;}
-            .button-spinner {
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                border: 2px solid #452D0F;
-                border-bottom-color: transparent;
-                border-radius: 50%;
-                animation: kwilt-spin 0.8s linear infinite;
-            }`
+            .kwilt-summary-total-price{font-size:24px; font-weight:500;}`
+            
         document.head.appendChild(style);
     };
 
@@ -733,7 +725,7 @@
 
                     container.classList.remove('active', 'clicked'); // Close popup
                     setCartLock(true); // Lock cart actions
-                    setButtonLoading(quickAddBtn, true, '<span class="button-spinner"></span>');
+                    setButtonLoading(quickAddBtn, true);
                     const isGuest = !localStorage.getItem('atkn');
                     const isPanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
 
