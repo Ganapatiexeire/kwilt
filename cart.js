@@ -263,11 +263,12 @@
             .kwilt-recommended-item {
                 display: flex;
                 align-items: center;
-                background-color: #F9F6F4;
+                background-color: #FFFFFF;
                 padding: 16px;
-                border-radius: 12px;
+                border-radius: 6px;
                 margin-right: 16px; /* Space between items */
                 min-width: 350px; /* Increased width for content */
+                min-height:110px;
             }
 
             .kwilt-cart-footer { padding: 20px; border-top: 1px solid #eee; background:white; box-shadow: -5px 0 15px rgba(0,0,0,0.1)}
@@ -350,7 +351,7 @@
                 background-color: #FFFFFF;
                 color: #452D0F;
                 border: 1px solid #452D0F;
-                border-radius: 6px;
+                border-radius: 2px;
                 padding: 8px 24px;
                 cursor: pointer;
                 font-weight: 500;
@@ -391,7 +392,16 @@
             .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
             .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
             .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
-            .kwilt-summary-total-price{font-size:24px; font-weight:500;}`
+            .kwilt-summary-total-price{font-size:24px; font-weight:500;}
+            .button-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #452D0F;
+                border-bottom-color: transparent;
+                border-radius: 50%;
+                animation: kwilt-spin 0.8s linear infinite;
+            }`
         document.head.appendChild(style);
     };
 
