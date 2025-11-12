@@ -42,29 +42,30 @@ const injectStyles = () => {
         .button-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
         
         .qa-container { position: relative; }
-        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; width: 340px; overflow: hidden; }
+        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; width: 340px; overflow: hidden; font-family: sans-serif; }
         .qa-container.active .qa-popup { display: block; }
 
         .qa-accordion, .qa-panel { padding: 15px; cursor: pointer; border-bottom: 1px solid #EAE0DC; background-color: #F5F5F5; }
         .qa-panel { background-color: #FFFBEB; }
-        .qa-accordion:last-of-type, .qa-panel:last-of-type { border-bottom: none; }
+        .qa-accordion:last-of-type, .qa-panel:last-of-type, .qa-accordion + .qa-panel { border-bottom: none; }
 
         .qa-accordion-header, .qa-panel-header { display: flex; align-items: center; justify-content: space-between; }
         .qa-header-content { display: flex; align-items: center; }
         
-        .qa-radio { width: 20px; height: 20px; border: 2px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; }
+        .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; box-sizing: border-box; }
         .qa-accordion.selected > .qa-accordion-header .qa-radio, .qa-panel.selected .qa-radio, .qa-plan-item.selected .qa-radio { background-color: #FF816B; border-color: #FF816B; }
 
-        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; }
-        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; }
+        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 14px; }
+        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 14px; }
 
-        .qa-plan-list { display: none; padding-left: 35px; margin-top: 15px; }
+        .qa-plan-list { display: none; padding-left: 37px; margin-top: 15px; }
         .qa-accordion.selected .qa-plan-list { display: block; }
 
-        .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+        .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EAE0DC; }
+        .qa-plan-item:last-child { border-bottom: none; }
         .qa-plan-selection { display: flex; align-items: center; }
-        .qa-plan-label { color: #452D0F; }
-        .qa-plan-price { color: #452D0F; }
+        .qa-plan-label { color: #452D0F; font-weight: 400; font-size: 14px; }
+        .qa-plan-price { color: #452D0F; font-weight: 400; font-size: 14px; }
 
         .pl-image { position: relative; }
         .product-tag.list {
@@ -255,10 +256,6 @@ const setupQuickAddListeners = () => {
         containers.forEach(container => {
             if (!container.contains(e.target)) {
                 container.classList.remove('active', 'clicked');
-                const button = container.querySelector('.add-tocart-button');
-                if (button) {
-                    hideButtonSpinner(button, 'ADD TO CART');
-                }
             }
         });
     });
@@ -267,20 +264,21 @@ const setupQuickAddListeners = () => {
         const quickAddBtn = container.querySelector('.add-tocart-button');
         const popup = container.querySelector('.qa-popup');
 
-        quickAddBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent navigation
-            e.stopPropagation();
-            
-            const wasClicked = container.classList.contains('clicked');
-            
-            // Close all other popups
-            document.querySelectorAll('.qa-container').forEach(c => c.classList.remove('active', 'clicked'));
+        container.addEventListener('mouseenter', () => {
+            popup.style.width = `${quickAddBtn.offsetWidth}px`;
+            container.classList.add('active');
+        });
 
-            // Toggle current popup
-            if (!wasClicked) {
-                container.classList.add('active', 'clicked');
-                popup.style.width = `${quickAddBtn.offsetWidth}px`;
+        container.addEventListener('mouseleave', () => {
+            if (!container.classList.contains('clicked')) {
+                container.classList.remove('active');
             }
+        });
+
+        quickAddBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            container.classList.toggle('clicked');
         });
 
         const accordions = container.querySelectorAll('.qa-accordion');
@@ -294,16 +292,15 @@ const setupQuickAddListeners = () => {
         }
 
         allOptions.forEach(option => {
-            option.addEventListener('click', (e) => {
+            const header = option.querySelector('.qa-accordion-header, .qa-panel-header');
+            header.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isAccordion = option.classList.contains('qa-accordion');
                 const isMemberPricing = option.classList.contains('member-pricing');
 
-                if (option.classList.contains('selected')) {
-                     if (isAccordion) { // If it's an accordion, toggle it
-                        option.classList.remove('selected');
-                     }
-                     return;
+                if (isAccordion && option.classList.contains('selected')) {
+                    option.classList.remove('selected');
+                    return;
                 }
 
                 allOptions.forEach(opt => opt.classList.remove('selected'));
@@ -311,7 +308,7 @@ const setupQuickAddListeners = () => {
 
                 if (!userIsMember && isMemberPricing && panel) {
                     panel.classList.add('selected');
-                } else if (!isMemberPricing) {
+                } else if (!isMemberPricing && panel) {
                     panel.classList.remove('selected');
                 }
             });
@@ -324,11 +321,9 @@ const setupQuickAddListeners = () => {
                 const parentAccordion = item.closest('.qa-accordion');
                 if (!parentAccordion) return;
 
-                // Deselect other plan items within the same list
                 parentAccordion.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
                 
-                // Ensure parent accordion is selected
                 if (!parentAccordion.classList.contains('selected')) {
                     allOptions.forEach(i => i.classList.remove('selected'));
                     parentAccordion.classList.add('selected');
