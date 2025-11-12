@@ -375,18 +375,18 @@
             .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 0; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; height: fit-content; }
             .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
-            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #e0dcdc; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
+            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #AEAEAE; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
             .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; padding: 12px; cursor: pointer; }
             .kwilt-recommended-item .qa-header-content { display: flex; align-items: center; flex-grow: 1; }
             .kwilt-recommended-item .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452d0f; border-radius: 50%; margin-right: 12px; flex-shrink: 0; position: relative; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #452d0f; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio::after, .kwilt-recommended-item .qa-panel.selected .qa-radio::after, .kwilt-recommended-item .qa-plan-item.selected .qa-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: white; border-radius: 50%; transform: translate(-50%, -50%); }
+            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #FF816B;border: none; }
+            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio::after, .kwilt-recommended-item .qa-panel.selected .qa-radio::after, .kwilt-recommended-item .qa-plan-item.selected .qa-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); }
             .kwilt-recommended-item .qa-accordion-title, .kwilt-recommended-item .qa-panel-title { font-weight: 500; text-transform: uppercase; font-size: 14px; color: #333; }
             .kwilt-recommended-item .qa-accordion-price, .kwilt-recommended-item .qa-panel-price { font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-plan-list { display: none; padding: 5px 10px 10px; border-top: 1px solid #e0dcdc; margin-top: 10px; }
+            .kwilt-recommended-item .qa-plan-list { display: none; padding: 5px 10px 10px; border-top: 1px solid #AEAEAE; margin-top: 10px; }
             .kwilt-recommended-item .qa-accordion.selected .qa-plan-list { display: block; }
-            .kwilt-recommended-item .qa-plan-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer; border-radius: 4px; }
-            .kwilt-recommended-item .qa-plan-item:hover { background-color: #ede3e0; }
+            .kwilt-recommended-item .qa-plan-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; cursor: pointer; border-radius: 4px; border-bottom: 1px solid #AEAEAE; }
+            .kwilt-recommended-item .qa-plan-item:hover { }
             .kwilt-recommended-item .qa-plan-selection { display: flex; align-items: center; }
             .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
             .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
