@@ -376,7 +376,7 @@
             .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
             .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { padding: 20px; cursor: pointer; border-bottom: 1px solid #aeaeae; background-color: #E0DDDD; }
-            .kwilt-recommended-item .qa-panel { background-color: #FFFBEB; }
+            .kwilt-recommended-item .qa-panel { background-color: #FFFFFF; }
             .kwilt-recommended-item .qa-accordion:last-of-type, .kwilt-recommended-item .qa-panel:last-of-type, .kwilt-recommended-item .qa-accordion + .qa-panel { border-bottom: none; }
 
             .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; justify-content: space-between;width:100%; }
@@ -634,15 +634,6 @@
         const resetPopupState = (container) => {
             if (container) {
                 container.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-                const popup = container.querySelector('.qa-popup');
-                if (popup && popup.getAttribute('data-kwilt-fixed') === 'true') {
-                    popup.style.position = '';
-                    popup.style.bottom = '';
-                    popup.style.left = '';
-                    popup.style.top = '';
-                    popup.style.zIndex = '';
-                    popup.removeAttribute('data-kwilt-fixed');
-                }
             }
         };
 
@@ -680,41 +671,37 @@
                 }
                 container.classList.add('active');
 
-                // --- Start: Clipping Logic ---
+                // --- Start: Clipping Logic (Scrolling) ---
                 const verticalClippingContainer = container.closest('.kwilt-cart-body');
                 const horizontalClippingContainer = container.closest('.kwilt-recommended-scroll-container');
 
-                popup.style.visibility = 'hidden';
+                popup.style.visibility = 'hidden'; // Temporarily hide to get accurate dimensions
                 const popupRect = popup.getBoundingClientRect();
                 const btnRect = quickAddBtn.getBoundingClientRect();
-                popup.style.visibility = '';
+                popup.style.visibility = ''; // Show again
 
                 const verticalRect = verticalClippingContainer ? verticalClippingContainer.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
                 const horizontalRect = horizontalClippingContainer ? horizontalClippingContainer.getBoundingClientRect() : { left: 0, right: window.innerWidth };
 
-                const popupTop = btnRect.top - popupRect.height;
-                const popupLeft = btnRect.right - popupRect.width;
+                const popupTop = btnRect.top - popupRect.height; // Where the top of the popup would be if opened upwards
+                const popupLeft = btnRect.right - popupRect.width; // Where the left of the popup would be if opened to the right
 
-                if (popupTop < verticalRect.top || popupLeft < horizontalRect.left) {
-                    popup.style.position = 'fixed';
-                    popup.style.zIndex = '10001';
-                    popup.setAttribute('data-kwilt-fixed', 'true');
-
-                    if (popupTop < verticalRect.top) {
-                        popup.style.top = `${verticalRect.top + 5}px`; // Add 5px padding
-                        popup.style.bottom = 'auto';
-                    } else {
-                        popup.style.top = `${btnRect.top - popupRect.height}px`;
-                        popup.style.bottom = 'auto';
-                    }
-
-                    if (popupLeft < horizontalRect.left) {
-                        popup.style.left = `${horizontalRect.left + 5}px`;
-                    } else {
-                        popup.style.left = `${btnRect.right - popupRect.width}px`;
+                // Check for vertical clipping and scroll if needed
+                if (popupTop < verticalRect.top) {
+                    const scrollNeeded = verticalRect.top - popupTop + 5; // +5 for some padding
+                    if (verticalClippingContainer) {
+                        verticalClippingContainer.scrollTop += scrollNeeded;
                     }
                 }
-                // --- End: Clipping Logic ---
+
+                // Check for horizontal clipping and scroll if needed
+                if (popupLeft < horizontalRect.left) {
+                    const scrollNeeded = horizontalRect.left - popupLeft + 5; // +5 for some padding
+                    if (horizontalClippingContainer) {
+                        horizontalClippingContainer.scrollLeft += scrollNeeded;
+                    }
+                }
+                // --- End: Clipping Logic (Scrolling) ---
             };
 
             container.addEventListener('mouseenter', openPopup);

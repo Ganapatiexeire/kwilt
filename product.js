@@ -55,8 +55,8 @@ const injectStyles = () => {
         .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; box-sizing: border-box; }
         .qa-accordion.selected > .qa-accordion-header .qa-radio, .qa-panel.selected .qa-radio, .qa-plan-item.selected .qa-radio { background-color: #FF816B; border-color: #FF816B; }
 
-        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 16px; }
-        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 16px; }
+        .qa-accordion-title, .qa-panel-title { color: #452D0F; text-transform: uppercase; font-size: 16px; }
+        .qa-accordion-price, .qa-panel-price { color: #452D0F; font-size: 16px; }
 
         .qa-plan-list { display: none; padding-left: 15px; margin-top: 15px; border-top: 1px solid #aeaeae; }
         .qa-accordion.selected .qa-plan-list { display: block; }
