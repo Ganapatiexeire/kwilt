@@ -319,7 +319,6 @@ const setupQuickAddListeners = () => {
             }
         });
 
-        const accordions = container.querySelectorAll('.qa-accordion');
         const panel = container.querySelector('.qa-panel');
         const allOptions = container.querySelectorAll('.qa-accordion, .qa-panel');
         const allPlanItems = container.querySelectorAll('.qa-plan-item');
@@ -335,21 +334,30 @@ const setupQuickAddListeners = () => {
                 e.stopPropagation();
                 const isAccordion = option.classList.contains('qa-accordion');
                 const isMemberPricing = option.classList.contains('member-pricing');
+                const isComprehensivePanel = option.classList.contains('comprehensive-panel');
 
                 if (isAccordion && option.classList.contains('selected')) {
                     option.classList.remove('selected');
-                    // Also deselect child plan items
                     option.querySelectorAll('.qa-plan-item.selected').forEach(pi => pi.classList.remove('selected'));
+                    if (isMemberPricing && panel) {
+                        panel.classList.remove('selected');
+                    }
                     return;
                 }
 
-                allOptions.forEach(opt => opt.classList.remove('selected'));
+                container.querySelectorAll('.qa-accordion').forEach(acc => acc.classList.remove('selected'));
+                
                 option.classList.add('selected');
 
-                if (!userIsMember && isMemberPricing && panel) {
-                    panel.classList.add('selected');
-                } else if (!isMemberPricing && panel) {
-                    panel.classList.remove('selected');
+                if (!userIsMember && panel) {
+                    const memberPricingAccordion = container.querySelector('.member-pricing');
+                    if (isMemberPricing) {
+                        panel.classList.add('selected');
+                    } else if (isComprehensivePanel) {
+                        if(memberPricingAccordion) memberPricingAccordion.classList.add('selected');
+                    } else {
+                        panel.classList.remove('selected');
+                    }
                 }
             });
         });
@@ -365,10 +373,15 @@ const setupQuickAddListeners = () => {
                 item.classList.add('selected');
                 
                 if (!parentAccordion.classList.contains('selected')) {
-                    allOptions.forEach(i => i.classList.remove('selected'));
+                    container.querySelectorAll('.qa-accordion').forEach(i => i.classList.remove('selected'));
                     parentAccordion.classList.add('selected');
-                     if (!userIsMember && parentAccordion.classList.contains('member-pricing') && panel) {
+                }
+
+                if (!userIsMember && panel) {
+                    if (parentAccordion.classList.contains('member-pricing')) {
                         panel.classList.add('selected');
+                    } else {
+                        panel.classList.remove('selected');
                     }
                 }
 
@@ -398,7 +411,6 @@ const setupQuickAddListeners = () => {
                 } finally {
                     hideButtonSpinner(quickAddBtn, 'ADD TO CART');
                     container.classList.remove('active', 'clicked');
-                    // 3. Reset data after adding to cart
                     resetPopupState(container);
                 }
             });
