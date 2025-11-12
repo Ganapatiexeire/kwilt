@@ -475,7 +475,7 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price || item.price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
                 <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
                 <div class="kwilt-cart-item-footer">
                     <span class="kwilt-cart-item-price">$${parseFloat(item.price).toFixed(0)}</span>
@@ -639,6 +639,7 @@
                     popup.style.position = '';
                     popup.style.bottom = '';
                     popup.style.left = '';
+                    popup.style.top = '';
                     popup.style.zIndex = '';
                     popup.removeAttribute('data-kwilt-fixed');
                 }
@@ -662,8 +663,7 @@
         allContainers.forEach(container => {
             const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new');
             const popup = container.querySelector('.qa-popup');
-            const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
-
+            
             const openPopup = () => {
                 allContainers.forEach(c => {
                     if (c !== container) {
@@ -681,21 +681,38 @@
                 container.classList.add('active');
 
                 // --- Start: Clipping Logic ---
+                const verticalClippingContainer = container.closest('.kwilt-cart-body');
+                const horizontalClippingContainer = container.closest('.kwilt-recommended-scroll-container');
+
                 popup.style.visibility = 'hidden';
-                const rect = popup.getBoundingClientRect();
-                const scrollRect = scrollContainer ? scrollContainer.getBoundingClientRect() : { top: 0, left: 0, right: window.innerWidth, bottom: window.innerHeight };
+                const popupRect = popup.getBoundingClientRect();
                 const btnRect = quickAddBtn.getBoundingClientRect();
                 popup.style.visibility = '';
 
-                const popupAbsoluteTop = btnRect.top - rect.height;
-                const popupAbsoluteLeft = btnRect.right - rect.width;
+                const verticalRect = verticalClippingContainer ? verticalClippingContainer.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
+                const horizontalRect = horizontalClippingContainer ? horizontalClippingContainer.getBoundingClientRect() : { left: 0, right: window.innerWidth };
 
-                if (popupAbsoluteTop < scrollRect.top || popupAbsoluteLeft < scrollRect.left) {
+                const popupTop = btnRect.top - popupRect.height;
+                const popupLeft = btnRect.right - popupRect.width;
+
+                if (popupTop < verticalRect.top || popupLeft < horizontalRect.left) {
                     popup.style.position = 'fixed';
-                    popup.style.bottom = `${window.innerHeight - btnRect.top}px`;
-                    popup.style.left = `${btnRect.right - rect.width}px`;
                     popup.style.zIndex = '10001';
                     popup.setAttribute('data-kwilt-fixed', 'true');
+
+                    if (popupTop < verticalRect.top) {
+                        popup.style.top = `${verticalRect.top + 5}px`; // Add 5px padding
+                        popup.style.bottom = 'auto';
+                    } else {
+                        popup.style.top = `${btnRect.top - popupRect.height}px`;
+                        popup.style.bottom = 'auto';
+                    }
+
+                    if (popupLeft < horizontalRect.left) {
+                        popup.style.left = `${horizontalRect.left + 5}px`;
+                    } else {
+                        popup.style.left = `${btnRect.right - popupRect.width}px`;
+                    }
                 }
                 // --- End: Clipping Logic ---
             };
