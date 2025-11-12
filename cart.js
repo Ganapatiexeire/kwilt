@@ -475,7 +475,7 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price || item.price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price ? item.monthly_price: item.price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
                 <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
                 <div class="kwilt-cart-item-footer">
                     <span class="kwilt-cart-item-price">$${parseFloat(item.price).toFixed(0)}</span>
