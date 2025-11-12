@@ -630,6 +630,7 @@
 
     const setupRecommendedItemListeners = () => {
         const allContainers = document.querySelectorAll('.kwilt-cart-body .qa-container');
+        let leaveTimeout; // Declare leaveTimeout here to be accessible by all event listeners
 
         const resetPopupState = (container) => {
             if (container) {
@@ -656,6 +657,7 @@
             const popup = container.querySelector('.qa-popup');
             
             const openPopup = () => {
+                clearTimeout(leaveTimeout); // Clear any pending leave timeout
                 allContainers.forEach(c => {
                     if (c !== container) {
                         if (c.classList.contains('active')) {
@@ -675,7 +677,8 @@
                 const verticalClippingContainer = container.closest('.kwilt-cart-body');
                 const horizontalClippingContainer = container.closest('.kwilt-recommended-scroll-container');
 
-                popup.style.visibility = 'hidden'; // Temporarily hide to get accurate dimensions
+                // Temporarily hide to get accurate dimensions without affecting layout
+                popup.style.visibility = 'hidden';
                 const popupRect = popup.getBoundingClientRect();
                 const btnRect = quickAddBtn.getBoundingClientRect();
                 popup.style.visibility = ''; // Show again
@@ -704,18 +707,24 @@
                 // --- End: Clipping Logic (Scrolling) ---
             };
 
-            container.addEventListener('mouseenter', openPopup);
+            const closePopup = () => {
+                leaveTimeout = setTimeout(() => {
+                    if (!container.classList.contains('clicked')) {
+                        container.classList.remove('active');
+                        resetPopupState(container);
+                    }
+                }, 100); // 100ms delay
+            };
 
-            container.addEventListener('mouseleave', () => {
-                if (!container.classList.contains('clicked')) {
-                    container.classList.remove('active');
-                    resetPopupState(container);
-                }
-            });
+            container.addEventListener('mouseenter', openPopup);
+            container.addEventListener('mouseleave', closePopup);
+            popup.addEventListener('mouseenter', () => clearTimeout(leaveTimeout)); // Keep popup open if mouse moves onto it
+            popup.addEventListener('mouseleave', closePopup);
 
             quickAddBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                clearTimeout(leaveTimeout); // Clear any pending leave timeout
                 if (container.classList.contains('clicked')) {
                     container.classList.remove('clicked');
                     resetPopupState(container);
