@@ -42,14 +42,14 @@ const injectStyles = () => {
         .button-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
         
         .qa-container { position: relative; }
-        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; width: 340px; overflow: hidden; font-family: sans-serif; }
+        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; width: 340px; overflow: hidden; }
         .qa-container.active .qa-popup { display: block; }
 
         .qa-accordion, .qa-panel { padding: 20px; cursor: pointer; border-bottom: 1px solid #aeaeae; background-color: #E0DDDD; }
         .qa-panel { background-color: #FFFBEB; }
         .qa-accordion:last-of-type, .qa-panel:last-of-type, .qa-accordion + .qa-panel { border-bottom: none; }
 
-        .qa-accordion-header, .qa-panel-header { display: flex; align-items: center; justify-content: space-between; }
+        .qa-accordion-header, .qa-panel-header { display: flex; align-items: center; justify-content: space-between;width:100%; }
         .qa-header-content { display: flex; align-items: center; }
         
         .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; box-sizing: border-box; }
@@ -58,7 +58,7 @@ const injectStyles = () => {
         .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 16px; }
         .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 16px; }
 
-        .qa-plan-list { display: none; padding-left: 15px; margin-top: 15px; }
+        .qa-plan-list { display: none; padding-left: 15px; margin-top: 15px; border-top: 1px solid #aeaeae; }
         .qa-accordion.selected .qa-plan-list { display: block; }
 
         .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #AEAEAE; }
@@ -80,6 +80,12 @@ const injectStyles = () => {
             text-transform: uppercase;
             color: #333;
             z-index: 1;
+        }
+        .non-member-pricing{
+            border:none;
+        }
+        .non-member-pricing.selected{
+            border-bottom: 1px solid #aeaeae;
         }
         
         div#dot-mark:before, .dot-mark:before {
@@ -388,7 +394,7 @@ const setupQuickAddListeners = () => {
                     window.showToast(successMessage, 'success');
                     if(window.toggleCart) window.toggleCart();
                 } catch (error) {
-                    window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
+                    window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
                 } finally {
                     hideButtonSpinner(quickAddBtn, 'ADD TO CART');
                     container.classList.remove('active', 'clicked');

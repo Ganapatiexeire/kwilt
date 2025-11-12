@@ -372,24 +372,34 @@
             }
             /* Quick Add Popup Styles */
             .kwilt-recommended-item .qa-container { position: relative; }
-            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 0; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; border-radius: 8px; padding: 15px; width: 300px; height: fit-content; }
+            .kwilt-recommended-item .qa-popup { display: none; position: absolute; bottom: 0; right: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10000; width: 340px; overflow: hidden; font-family: sans-serif; }
             .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
-            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { border: 1px solid #AEAEAE; border-radius: 6px; margin-bottom: 8px; background-color: #f5eeec; }
-            .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; padding: 12px; cursor: pointer; }
-            .kwilt-recommended-item .qa-header-content { display: flex; align-items: center; flex-grow: 1; }
-            .kwilt-recommended-item .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452d0f; border-radius: 50%; margin-right: 12px; flex-shrink: 0; position: relative; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #FF816B;border: none; }
-            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio::after, .kwilt-recommended-item .qa-panel.selected .qa-radio::after, .kwilt-recommended-item .qa-plan-item.selected .qa-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); }
-            .kwilt-recommended-item .qa-accordion-title, .kwilt-recommended-item .qa-panel-title { font-weight: 500; text-transform: uppercase; font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-accordion-price, .kwilt-recommended-item .qa-panel-price { font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-plan-list { display: none; padding: 5px 10px 10px; border-top: 1px solid #AEAEAE; margin-top: 10px; }
+            .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { padding: 20px; cursor: pointer; border-bottom: 1px solid #aeaeae; background-color: #E0DDDD; }
+            .kwilt-recommended-item .qa-panel { background-color: #FFFBEB; }
+            .kwilt-recommended-item .qa-accordion:last-of-type, .kwilt-recommended-item .qa-panel:last-of-type, .kwilt-recommended-item .qa-accordion + .qa-panel { border-bottom: none; }
+
+            .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; justify-content: space-between;width:100%; }
+            .kwilt-recommended-item .qa-header-content { display: flex; align-items: center; }
+            
+            .kwilt-recommended-item .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; box-sizing: border-box; }
+            .kwilt-recommended-item .qa-accordion.selected > .qa-accordion-header .qa-radio, .kwilt-recommended-item .qa-panel.selected .qa-radio, .kwilt-recommended-item .qa-plan-item.selected .qa-radio { background-color: #FF816B; border-color: #FF816B; }
+
+            .kwilt-recommended-item .qa-accordion-title, .kwilt-recommended-item .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 16px; }
+            .kwilt-recommended-item .qa-accordion-price, .kwilt-recommended-item .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 16px; }
+
+            .kwilt-recommended-item .qa-plan-list { display: none; padding-left: 15px; margin-top: 15px; border-top: 1px solid #aeaeae; }
             .kwilt-recommended-item .qa-accordion.selected .qa-plan-list { display: block; }
-            .kwilt-recommended-item .qa-plan-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; cursor: pointer; border-radius: 4px; border-bottom: 1px solid #AEAEAE; }
-            .kwilt-recommended-item .qa-plan-item:hover { }
+
+            .kwilt-recommended-item .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #AEAEAE; }
+            .kwilt-recommended-item .qa-plan-item:last-child { border-bottom: none; }
             .kwilt-recommended-item .qa-plan-selection { display: flex; align-items: center; }
-            .kwilt-recommended-item .qa-plan-label { font-size: 14px; color: #333; }
-            .kwilt-recommended-item .qa-plan-price { font-size: 14px; color: #333; }
+            .kwilt-recommended-item .qa-plan-label { color: #452D0F; font-weight: 400; font-size: 16px; }
+            .kwilt-recommended-item .qa-plan-price { color: #452D0F; font-weight: 400; font-size: 16px; }
+
+            .kwilt-recommended-item .non-member-pricing{ border:none; }
+            .kwilt-recommended-item .non-member-pricing.selected{ border-bottom: 1px solid #aeaeae; }
+
             .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
             .kwilt-summary-total-price{font-size:24px; font-weight:500;}
             
@@ -500,18 +510,22 @@
         const userIsMember = !!(localStorage.getItem('atkn') && window.memerShip);
 
         const memberPlanItems = childOptions.map(o => `
-            <div class="qa-sub-option" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
-                <div class="custom-radio"></div>
-                <label>${o.frequency_count} ${o.frequency_unit}</label>
-                <span>$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</span>
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-selection">
+                    <div class="qa-radio"></div>
+                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                </div>
+                <div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</div>
             </div>
         `).join('');
 
         const nonMemberPlanItems = childOptions.map(o => `
-            <div class="qa-sub-option" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
-                <div class="custom-radio"></div>
-                <label>${o.frequency_count} ${o.frequency_unit}</label>
-                <span>$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</span>
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-selection">
+                    <div class="qa-radio"></div>
+                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                </div>
+                <div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</div>
             </div>
         `).join('');
 
@@ -525,44 +539,46 @@
                 <div class="kwilt-recommended-item-content">
                     <div class="kwilt-recommended-item-main">
                         <div class="kwilt-recommended-name-new">${product.product_name}</div>
-                        
                         <div class="qa-container" id="qa-rec-container-${index}">
-                            <button class="kwilt-recommended-add-btn-new" data-sku="${product.sku}">ADD</button>
+                            <button class="kwilt-recommended-add-btn-new">ADD</button>
                             <div class="qa-popup">
-                                <div class="qa-options-container">
-                                    <div class="qa-option member-pricing">
-                                        <div class="qa-option-header">
-                                            <div class="custom-radio"></div>
-                                            <label>MEMBER PRICING</label>
-                                            <span>FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</span>
+                                <div class="qa-accordion member-pricing">
+                                    <div class="qa-accordion-header">
+                                        <div class="qa-header-content">
+                                            <div class="qa-radio"></div>
+                                            <div class="qa-accordion-title">Member Pricing</div>
                                         </div>
-                                        <div class="qa-option-content">
-                                            ${memberPlanItems}
-                                        </div>
+                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div>
                                     </div>
-                                    <div class="qa-option non-member-pricing">
-                                        <div class="qa-option-header">
-                                            <div class="custom-radio"></div>
-                                            <label>NON-MEMBERS</label>
-                                            <span>FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</span>
-                                        </div>
-                                        <div class="qa-option-content">
-                                            ${nonMemberPlanItems}
-                                        </div>
+                                    <div class="qa-plan-list">
+                                        ${memberPlanItems}
                                     </div>
-                                    ${megaMember && !userIsMember ? `
-                                    <div class="qa-option comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
-                                        <div class="qa-option-header">
-                                            <div class="custom-radio"></div>
-                                            <label>COMPREHENSIVE PANEL</label>
-                                            <span>$${parseFloat(megaMember.installment_price).toFixed(0)}/year</span>
-                                        </div>
-                                    </div>
-                                    ` : ''}
                                 </div>
+                                <div class="qa-accordion non-member-pricing">
+                                    <div class="qa-accordion-header">
+                                        <div class="qa-header-content">
+                                            <div class="qa-radio"></div>
+                                            <div class="qa-accordion-title">Non-Member</div>
+                                        </div>
+                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div>
+                                    </div>
+                                    <div class="qa-plan-list">
+                                        ${nonMemberPlanItems}
+                                    </div>
+                                </div>
+                                ${megaMember && !userIsMember ? `
+                                <div class="qa-panel comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
+                                    <div class="qa-panel-header">
+                                        <div class="qa-header-content">
+                                            <div class="qa-radio"></div>
+                                            <div class="qa-panel-title">Comprehensive Panel</div>
+                                        </div>
+                                        <div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div>
+                                    </div>
+                                </div>
+                                ` : ''}
                             </div>
                         </div>
-
                     </div>
                     <div class="kwilt-recommended-item-sub">
                         <div class="kwilt-recommended-price-desc">$${parseFloat(price).toFixed(0)} for a ${supply_text}</div>
@@ -629,185 +645,150 @@
     const originalButtonTexts = new Map();
 
     const setupRecommendedItemListeners = () => {
-        const containers = document.querySelectorAll('.kwilt-cart-body .qa-container');
+        const allContainers = document.querySelectorAll('.kwilt-cart-body .qa-container');
 
-        // Using a single, delegated listener on the body to handle closing popups
-        // This is more efficient than adding a listener for every render.
+        const resetPopupState = (container) => {
+            if (container) {
+                container.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+            }
+        };
+
         if (!window.kwiltCartPopupCloser) {
             window.kwiltCartPopupCloser = (e) => {
-                const activePopups = document.querySelectorAll('.kwilt-cart-body .qa-container.active');
-                let clickedInsideActivePopup = false;
-                activePopups.forEach(container => {
-                    if (container.contains(e.target)) {
-                        clickedInsideActivePopup = true;
+                allContainers.forEach(container => {
+                    if (!container.contains(e.target)) {
+                        if (container.classList.contains('active')) {
+                            resetPopupState(container);
+                        }
+                        container.classList.remove('active', 'clicked');
                     }
-                });
-
-                if (clickedInsideActivePopup) {
-                    return; // Do not close if click is inside an active popup
-                }
-
-                // If click is outside all active popups, close all popups
-                const allPopups = document.querySelectorAll('.kwilt-cart-body .qa-container');
-                allPopups.forEach(container => {
-                    const popup = container.querySelector('.qa-popup');
-                    if (popup && popup.getAttribute('data-kwilt-fixed') === 'true') {
-                        popup.style.position = '';
-                        popup.style.bottom = '';
-                        popup.style.left = '';
-                        popup.style.zIndex = '';
-                        popup.removeAttribute('data-kwilt-fixed');
-                    }
-                    container.classList.remove('active', 'clicked');
                 });
             };
             document.body.addEventListener('click', window.kwiltCartPopupCloser, true);
         }
 
-
-        containers.forEach(container => {
-            const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new'); // Changed to new class
+        allContainers.forEach(container => {
+            const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new');
             const popup = container.querySelector('.qa-popup');
-            const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
 
-            const showPopup = () => {
-                if (container.classList.contains('clicked')) return;
-
-                const recommendedItem = container.closest('.kwilt-recommended-item');
-                if (recommendedItem && popup) {
-                    popup.style.width = `${recommendedItem.offsetWidth}px`;
-
-                    // Temporarily make visible to calculate dimensions
-                    popup.style.visibility = 'hidden';
-                    container.classList.add('active'); // Add active class to make it display: block
-                    
-                    const rect = popup.getBoundingClientRect();
-                    const scrollRect = scrollContainer ? scrollContainer.getBoundingClientRect() : { top: 0, left: 0, right: window.innerWidth }; // Handle case where no scrollContainer
-                    const btnRect = quickAddBtn.getBoundingClientRect();
-
-                    // Reset visibility
-                    popup.style.visibility = '';
-
-                    // Calculate where the popup's top and left would be if it were absolutely positioned
-                    // relative to the viewport, assuming its default bottom:100% and right:0
-                    const popupAbsoluteTop = btnRect.top - rect.height; // Top of button minus popup height
-                    const popupAbsoluteLeft = btnRect.right - rect.width; // Right of button minus popup width
-
-                    // Check if the popup would be clipped vertically or horizontally
-                    if (popupAbsoluteTop < scrollRect.top || popupAbsoluteLeft < scrollRect.left) {
-                        popup.style.position = 'fixed';
-                        // Position the popup relative to the button, ensuring it's not clipped
-                        popup.style.bottom = `${window.innerHeight - btnRect.top}px`; // Align popup bottom with button top
-                        popup.style.left = `${btnRect.right - popup.offsetWidth}px`; // Align right edge with button's right edge
-                        popup.style.zIndex = '10001';
-                        popup.setAttribute('data-kwilt-fixed', 'true');
+            const openPopup = () => {
+                allContainers.forEach(c => {
+                    if (c !== container) {
+                        if (c.classList.contains('active')) {
+                           resetPopupState(c);
+                        }
+                        c.classList.remove('active', 'clicked');
                     }
+                });
+                const recommendedItem = container.closest('.kwilt-recommended-item');
+                if (recommendedItem) {
+                    popup.style.width = `${recommendedItem.offsetWidth}px`;
                 }
                 container.classList.add('active');
             };
 
-            const hidePopup = () => {
+            container.addEventListener('mouseenter', openPopup);
+
+            container.addEventListener('mouseleave', () => {
                 if (!container.classList.contains('clicked')) {
-                    if (popup.getAttribute('data-kwilt-fixed') === 'true') {
-                        popup.style.position = '';
-                        popup.style.bottom = '';
-                        popup.style.left = '';
-                        popup.style.zIndex = '';
-                        popup.removeAttribute('data-kwilt-fixed');
-                    }
                     container.classList.remove('active');
-                }
-            };
-
-            container.addEventListener('mouseenter', showPopup);
-            container.addEventListener('mouseleave', hidePopup);
-
-            quickAddBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                container.classList.toggle('clicked');
-                if (container.classList.contains('clicked')) {
-                    showPopup();
-                } else {
-                    hidePopup();
+                    resetPopupState(container);
                 }
             });
 
-            const options = container.querySelectorAll('.qa-option');
-	        const subOptions = container.querySelectorAll('.qa-sub-option');
-	        const userIsMember = !!(localStorage.getItem('atkn') && window.memerShip);
-	        const comprehensivePanel = container.querySelector('.comprehensive-panel');
+            quickAddBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (container.classList.contains('clicked')) {
+                    container.classList.remove('clicked');
+                    resetPopupState(container);
+                } else {
+                    openPopup();
+                    container.classList.add('clicked');
+                }
+            });
 
-	        if (userIsMember && comprehensivePanel) {
-	            comprehensivePanel.style.display = 'none';
-	        }
+            const panel = container.querySelector('.qa-panel');
+            const allOptions = container.querySelectorAll('.qa-accordion, .qa-panel');
+            const allPlanItems = container.querySelectorAll('.qa-plan-item');
+            const userIsMember = !!window.memerShip;
 
-	        options.forEach(option => {
-	            option.addEventListener('click', (e) => {
-	                e.stopPropagation();
-	                const isMemberPricing = option.classList.contains('member-pricing');
-	                
-	                options.forEach(opt => opt.classList.remove('selected', 'expanded'));
-	                subOptions.forEach(subOpt => subOpt.classList.remove('selected'));
+            if (userIsMember && panel) {
+                panel.style.display = 'none';
+            }
 
-	                option.classList.add('selected');
-	                if (option.querySelector('.qa-option-content')) {
-	                    option.classList.add('expanded');
-	                }
+            allOptions.forEach(option => {
+                const header = option.querySelector('.qa-accordion-header, .qa-panel-header');
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isAccordion = option.classList.contains('qa-accordion');
+                    const isMemberPricing = option.classList.contains('member-pricing');
 
-	                if (!userIsMember && isMemberPricing && comprehensivePanel) {
-	                    comprehensivePanel.classList.add('selected');
-	                }
-	            });
-	        });
+                    if (isAccordion && option.classList.contains('selected')) {
+                        option.classList.remove('selected');
+                        option.querySelectorAll('.qa-plan-item.selected').forEach(pi => pi.classList.remove('selected'));
+                        return;
+                    }
 
-	        subOptions.forEach(item => {
-	            item.addEventListener('click', async (e) => {
-	                e.stopPropagation();
-	                
-	                const parentOption = item.closest('.qa-option');
-	                if (!parentOption) return;
+                    allOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
 
-	                parentOption.parentElement.querySelectorAll('.qa-sub-option').forEach(i => i.classList.remove('selected'));
-	                item.classList.add('selected');
-	                
-	                if (!parentOption.classList.contains('selected')) {
-	                    parentOption.parentElement.querySelectorAll('.qa-option').forEach(i => i.classList.remove('selected', 'expanded'));
-	                    parentOption.classList.add('selected', 'expanded');
-	                }
+                    if (!userIsMember && isMemberPricing && panel) {
+                        panel.classList.add('selected');
+                    } else if (!isMemberPricing && panel) {
+                        panel.classList.remove('selected');
+                    }
+                });
+            });
 
-	                hidePopup();
-	                setCartLock(true);
-	                setButtonLoading(quickAddBtn, true);
+            allPlanItems.forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const parentAccordion = item.closest('.qa-accordion');
+                    if (!parentAccordion) return;
 
-	                try {
-	                    let successMessage = 'Item added to cart!';
-	                    const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }] };
-	                    const isComprehensivePanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
+                    parentAccordion.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    
+                    if (!parentAccordion.classList.contains('selected')) {
+                        allOptions.forEach(i => i.classList.remove('selected'));
+                        parentAccordion.classList.add('selected');
+                         if (!userIsMember && parentAccordion.classList.contains('member-pricing') && panel) {
+                            panel.classList.add('selected');
+                        }
+                    }
 
-	                    if (userIsMember) {
-	                        await cartApi.addItem(planPayload);
-	                    } else {
-	                        if (isComprehensivePanelSelected) {
-	                            const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }] };
-	                            await cartApi.addItem(panelPayload);
-	                            await cartApi.addItem(planPayload);
-	                            successMessage = 'Items added to cart!';
-	                        } else {
-	                            await cartApi.addItem(planPayload);
-	                        }
-	                    }
-	                    
-	                    await refreshCart();
-	                    window.showToast(successMessage, 'success');
+                    setButtonLoading(quickAddBtn, true);
+                    const isGuest = !getAuthToken();
+                    const isPanelSelected = panel && panel.classList.contains('selected');
 
-	                } catch (error) {
-	                    window.showToast(error.message || 'There was a problem adding items to your cart.', 'error');
-	                } finally {
-	                    setButtonLoading(quickAddBtn, false);
-	                    setCartLock(false);
-	                }
-	            });
-	        });
+                    try {
+                        let successMessage = 'Item added to cart!';
+                        const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
+
+                        if (userIsMember) {
+                            await cartApi.addItem(planPayload);
+                        } else if (isPanelSelected) {
+                            successMessage = 'Items added to cart!';
+                            const panelPayload = { sku: panel.dataset.sku, __co: [{ "__oid": parseInt(panel.dataset.oid), "__ov": parseInt(panel.dataset.vid) }], __q: 1 };
+                            await cartApi.addItem(panelPayload);
+                            await cartApi.addItem(planPayload);
+                        } else {
+                            await cartApi.addItem(planPayload);
+                        }
+                        
+                        await refreshCart();
+                        window.showToast(successMessage, 'success');
+
+                    } catch (error) {
+                        window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                    } finally {
+                        setButtonLoading(quickAddBtn, false);
+                        container.classList.remove('active', 'clicked');
+                        resetPopupState(container);
+                    }
+                });
+            });
         });
     };
 
@@ -908,7 +889,7 @@
                     input.disabled = true;
                     const result = await cartApi.applyCoupon(code);
                     if (!result.success) {
-                        window.showToast(result.message || 'Invalid coupon code. Please try again.', 'error');
+                        window.showToast('Invalid coupon code. Please try again.', 'error');
                     } else {
                         window.showToast('Coupon applied!', 'success');
 
@@ -934,7 +915,7 @@
                 setButtonLoading(removeButton, true);
                 const result = await cartApi.removeCoupon();
                 if (!result.success) {
-                    window.showToast(result.message || 'Failed to remove coupon.', 'error');
+                    window.showToast('Failed to remove coupon. Please try again.', 'error');
                 } else {
                     window.showToast('Coupon removed.', 'success');
                 }

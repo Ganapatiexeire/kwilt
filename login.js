@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             errorEl = document.createElement("div");
             errorEl.className = "form-error-message";
-            errorEl.textContent = err.message || "Login failed, please try again.";
+            errorEl.textContent = "Login failed. Please check your credentials and try again.";
 
             btnEl.insertAdjacentElement("beforebegin", errorEl);
             throw err;
