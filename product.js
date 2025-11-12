@@ -45,7 +45,7 @@ const injectStyles = () => {
         .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; width: 340px; overflow: hidden; font-family: sans-serif; }
         .qa-container.active .qa-popup { display: block; }
 
-        .qa-accordion, .qa-panel { padding: 15px; cursor: pointer; border-bottom: 1px solid #EAE0DC; background-color: #F5F5F5; }
+        .qa-accordion, .qa-panel { padding: 20px; cursor: pointer; border-bottom: 1px solid #aeaeae; background-color: #E0DDDD; }
         .qa-panel { background-color: #FFFBEB; }
         .qa-accordion:last-of-type, .qa-panel:last-of-type, .qa-accordion + .qa-panel { border-bottom: none; }
 
@@ -55,17 +55,17 @@ const injectStyles = () => {
         .qa-radio { width: 20px; height: 20px; border: 1.5px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; box-sizing: border-box; }
         .qa-accordion.selected > .qa-accordion-header .qa-radio, .qa-panel.selected .qa-radio, .qa-plan-item.selected .qa-radio { background-color: #FF816B; border-color: #FF816B; }
 
-        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 14px; }
-        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 14px; }
+        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; font-size: 16px; }
+        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; font-size: 16px; }
 
-        .qa-plan-list { display: none; padding-left: 37px; margin-top: 15px; }
+        .qa-plan-list { display: none; padding-left: 15px; margin-top: 15px; }
         .qa-accordion.selected .qa-plan-list { display: block; }
 
-        .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #EAE0DC; }
+        .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #AEAEAE; }
         .qa-plan-item:last-child { border-bottom: none; }
         .qa-plan-selection { display: flex; align-items: center; }
-        .qa-plan-label { color: #452D0F; font-weight: 400; font-size: 14px; }
-        .qa-plan-price { color: #452D0F; font-weight: 400; font-size: 14px; }
+        .qa-plan-label { color: #452D0F; font-weight: 400; font-size: 16px; }
+        .qa-plan-price { color: #452D0F; font-weight: 400; font-size: 16px; }
 
         .pl-image { position: relative; }
         .product-tag.list {
@@ -250,35 +250,67 @@ const _renderProductsToDOM = (products) => {
 };
 
 const setupQuickAddListeners = () => {
-    const containers = document.querySelectorAll('.qa-container');
+    const allContainers = document.querySelectorAll('.qa-container');
 
+    // Helper function to reset the internal state of a popup
+    const resetPopupState = (container) => {
+        if (container) {
+            container.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+        }
+    };
+
+    // Global click listener to close any open/clicked popups
     document.body.addEventListener('click', (e) => {
-        containers.forEach(container => {
+        allContainers.forEach(container => {
             if (!container.contains(e.target)) {
+                if (container.classList.contains('active')) {
+                    resetPopupState(container);
+                }
                 container.classList.remove('active', 'clicked');
             }
         });
     });
 
-    containers.forEach(container => {
+    allContainers.forEach(container => {
         const quickAddBtn = container.querySelector('.add-tocart-button');
         const popup = container.querySelector('.qa-popup');
 
-        container.addEventListener('mouseenter', () => {
+        const openPopup = () => {
+            // 1. Only one popup at a time: Close and reset all others
+            allContainers.forEach(c => {
+                if (c !== container) {
+                    if (c.classList.contains('active')) {
+                       resetPopupState(c);
+                    }
+                    c.classList.remove('active', 'clicked');
+                }
+            });
+            // Open the current one
             popup.style.width = `${quickAddBtn.offsetWidth}px`;
             container.classList.add('active');
-        });
+        };
+
+        container.addEventListener('mouseenter', openPopup);
 
         container.addEventListener('mouseleave', () => {
             if (!container.classList.contains('clicked')) {
                 container.classList.remove('active');
+                // 2. Reset data if popup is closed
+                resetPopupState(container);
             }
         });
 
         quickAddBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            container.classList.toggle('clicked');
+            
+            if (container.classList.contains('clicked')) {
+                container.classList.remove('clicked');
+                resetPopupState(container);
+            } else {
+                openPopup(); // Ensure it's open and others are closed
+                container.classList.add('clicked');
+            }
         });
 
         const accordions = container.querySelectorAll('.qa-accordion');
@@ -300,6 +332,8 @@ const setupQuickAddListeners = () => {
 
                 if (isAccordion && option.classList.contains('selected')) {
                     option.classList.remove('selected');
+                    // Also deselect child plan items
+                    option.querySelectorAll('.qa-plan-item.selected').forEach(pi => pi.classList.remove('selected'));
                     return;
                 }
 
@@ -358,6 +392,8 @@ const setupQuickAddListeners = () => {
                 } finally {
                     hideButtonSpinner(quickAddBtn, 'ADD TO CART');
                     container.classList.remove('active', 'clicked');
+                    // 3. Reset data after adding to cart
+                    resetPopupState(container);
                 }
             });
         });
