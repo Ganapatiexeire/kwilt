@@ -630,7 +630,10 @@
 
     const setupRecommendedItemListeners = () => {
         const allContainers = document.querySelectorAll('.kwilt-cart-body .qa-container');
-        let leaveTimeout; // Declare leaveTimeout here to be accessible by all event listeners
+        let leaveTimeout;
+
+        // Store original parent and nextSibling for each popup
+        const popupOriginalPositions = new Map();
 
         const resetPopupState = (container) => {
             if (container) {
@@ -646,6 +649,20 @@
                             resetPopupState(container);
                         }
                         container.classList.remove('active', 'clicked');
+                        // Ensure popup is moved back to original position if active
+                        const popup = container.querySelector('.qa-popup');
+                        if (popup && popupOriginalPositions.has(popup)) {
+                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
+                            if (nextSibling) {
+                                parent.insertBefore(popup, nextSibling);
+                            } else {
+                                parent.appendChild(popup);
+                            }
+                            popup.style.position = '';
+                            popup.style.top = '';
+                            popup.style.left = '';
+                            popup.style.width = '';
+                        }
                     }
                 });
             };
@@ -655,15 +672,37 @@
         allContainers.forEach(container => {
             const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new');
             const popup = container.querySelector('.qa-popup');
+
+            // Store original position
+            if (popup && !popupOriginalPositions.has(popup)) {
+                popupOriginalPositions.set(popup, {
+                    parent: popup.parentNode,
+                    nextSibling: popup.nextSibling
+                });
+            }
             
             const openPopup = () => {
-                clearTimeout(leaveTimeout); // Clear any pending leave timeout
+                clearTimeout(leaveTimeout);
                 allContainers.forEach(c => {
                     if (c !== container) {
                         if (c.classList.contains('active')) {
                            resetPopupState(c);
                         }
                         c.classList.remove('active', 'clicked');
+                        // Ensure other popups are moved back to original position
+                        const otherPopup = c.querySelector('.qa-popup');
+                        if (otherPopup && popupOriginalPositions.has(otherPopup)) {
+                            const { parent, nextSibling } = popupOriginalPositions.get(otherPopup);
+                            if (nextSibling) {
+                                parent.insertBefore(otherPopup, nextSibling);
+                            } else {
+                                parent.appendChild(otherPopup);
+                            }
+                            otherPopup.style.position = '';
+                            otherPopup.style.top = '';
+                            otherPopup.style.left = '';
+                            otherPopup.style.width = '';
+                        }
                     }
                 });
 
@@ -673,38 +712,21 @@
                 }
                 container.classList.add('active');
 
-                // --- Start: Clipping Logic (Scrolling) ---
-                const verticalClippingContainer = container.closest('.kwilt-cart-body');
-                const horizontalClippingContainer = container.closest('.kwilt-recommended-scroll-container');
-
-                // Temporarily hide to get accurate dimensions without affecting layout
-                popup.style.visibility = 'hidden';
-                const popupRect = popup.getBoundingClientRect();
+                // --- Start: DOM Manipulation for positioning ---
                 const btnRect = quickAddBtn.getBoundingClientRect();
-                popup.style.visibility = ''; // Show again
+                const popupRect = popup.getBoundingClientRect(); // Get initial dimensions
 
-                const verticalRect = verticalClippingContainer ? verticalClippingContainer.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
-                const horizontalRect = horizontalClippingContainer ? horizontalClippingContainer.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+                // Calculate desired position relative to viewport
+                const desiredTop = btnRect.top - popupRect.height;
+                const desiredLeft = btnRect.left; // Align left with button
 
-                const popupTop = btnRect.top - popupRect.height; // Where the top of the popup would be if opened upwards
-                const popupLeft = btnRect.right - popupRect.width; // Where the left of the popup would be if opened to the right
-
-                // Check for vertical clipping and scroll if needed
-                if (popupTop < verticalRect.top) {
-                    const scrollNeeded = verticalRect.top - popupTop + 5; // +5 for some padding
-                    if (verticalClippingContainer) {
-                        verticalClippingContainer.scrollTop += scrollNeeded;
-                    }
-                }
-
-                // Check for horizontal clipping and scroll if needed
-                if (popupLeft < horizontalRect.left) {
-                    const scrollNeeded = horizontalRect.left - popupLeft + 5; // +5 for some padding
-                    if (horizontalClippingContainer) {
-                        horizontalClippingContainer.scrollLeft += scrollNeeded;
-                    }
-                }
-                // --- End: Clipping Logic (Scrolling) ---
+                // Move popup to body and position fixed
+                document.body.appendChild(popup);
+                popup.style.position = 'fixed';
+                popup.style.top = `${desiredTop}px`;
+                popup.style.left = `${desiredLeft}px`;
+                popup.style.width = `${recommendedItem.offsetWidth}px`; // Ensure width is maintained
+                // --- End: DOM Manipulation for positioning ---
             };
 
             const closePopup = () => {
@@ -712,22 +734,48 @@
                     if (!container.classList.contains('clicked')) {
                         container.classList.remove('active');
                         resetPopupState(container);
+                        // Move popup back to original position
+                        if (popupOriginalPositions.has(popup)) {
+                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
+                            if (nextSibling) {
+                                parent.insertBefore(popup, nextSibling);
+                            } else {
+                                parent.appendChild(popup);
+                            }
+                            popup.style.position = '';
+                            popup.style.top = '';
+                            popup.style.left = '';
+                            popup.style.width = '';
+                        }
                     }
-                }, 100); // 100ms delay
+                }, 100);
             };
 
             container.addEventListener('mouseenter', openPopup);
             container.addEventListener('mouseleave', closePopup);
-            popup.addEventListener('mouseenter', () => clearTimeout(leaveTimeout)); // Keep popup open if mouse moves onto it
+            popup.addEventListener('mouseenter', () => clearTimeout(leaveTimeout));
             popup.addEventListener('mouseleave', closePopup);
 
             quickAddBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                clearTimeout(leaveTimeout); // Clear any pending leave timeout
+                clearTimeout(leaveTimeout);
                 if (container.classList.contains('clicked')) {
                     container.classList.remove('clicked');
                     resetPopupState(container);
+                    // Move popup back to original position
+                    if (popupOriginalPositions.has(popup)) {
+                        const { parent, nextSibling } = popupOriginalPositions.get(popup);
+                        if (nextSibling) {
+                            parent.insertBefore(popup, nextSibling);
+                        } else {
+                            parent.appendChild(popup);
+                        }
+                        popup.style.position = '';
+                        popup.style.top = '';
+                        popup.style.left = '';
+                        popup.style.width = '';
+                    }
                 } else {
                     openPopup();
                     container.classList.add('clicked');
@@ -827,6 +875,19 @@
                         setButtonLoading(quickAddBtn, false);
                         container.classList.remove('active', 'clicked');
                         resetPopupState(container);
+                        // Move popup back to original position after action
+                        if (popupOriginalPositions.has(popup)) {
+                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
+                            if (nextSibling) {
+                                parent.insertBefore(popup, nextSibling);
+                            } else {
+                                parent.appendChild(popup);
+                            }
+                            popup.style.position = '';
+                            popup.style.top = '';
+                            popup.style.left = '';
+                            popup.style.width = '';
+                        }
                     }
                 });
             });
