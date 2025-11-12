@@ -42,23 +42,29 @@ const injectStyles = () => {
         .button-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
         
         .qa-container { position: relative; }
-        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #F9F5F3; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; padding: 20px; width: 340px; }
+        .qa-popup { display: none; position: absolute; bottom: 100%; left: 0; background: #FFFFFF; border: 1px solid #EAE0DC; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); z-index: 10; border-radius: 12px; width: 340px; overflow: hidden; }
         .qa-container.active .qa-popup { display: block; }
 
-        .qa-options-container { display: flex; flex-direction: column; gap: 10px; }
-        .qa-option { background: #F0EBE8; border-radius: 8px; border: 1px solid #EAE0DC; transition: all 0.3s ease; }
-        .qa-option.expanded { background: #FFF; }
-        .qa-option-header { display: flex; align-items: center; padding: 15px; cursor: pointer; }
-        .qa-option-header label { flex-grow: 1; font-weight: 500; color: #452D0F; text-transform: uppercase; }
-        .qa-option-header span { font-weight: 500; color: #452D0F; }
-        .custom-radio { width: 20px; height: 20px; border: 2px solid #452D0F; border-radius: 50%; margin-right: 15px; position: relative; flex-shrink: 0; }
-        .qa-option.selected > .qa-option-header .custom-radio, .qa-sub-option.selected .custom-radio { background: #FF816B; border-color: #FF816B; }
-        .qa-option.selected > .qa-option-header .custom-radio::after, .qa-sub-option.selected .custom-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: white; border-radius: 50%; transform: translate(-50%, -50%); }
-        .qa-option-content { display: none; padding: 0 15px 15px; border-top: 1px solid #EAE0DC; margin-top: 10px; }
-        .qa-option.expanded .qa-option-content { display: block; }
-        .qa-sub-option { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
-        .qa-sub-option label { flex-grow: 1; color: #452D0F; }
-        .qa-sub-option span { color: #452D0F; }
+        .qa-accordion, .qa-panel { padding: 15px; cursor: pointer; border-bottom: 1px solid #EAE0DC; background-color: #F5F5F5; }
+        .qa-panel { background-color: #FFFBEB; }
+        .qa-accordion:last-of-type, .qa-panel:last-of-type { border-bottom: none; }
+
+        .qa-accordion-header, .qa-panel-header { display: flex; align-items: center; justify-content: space-between; }
+        .qa-header-content { display: flex; align-items: center; }
+        
+        .qa-radio { width: 20px; height: 20px; border: 2px solid #452D0F; border-radius: 50%; margin-right: 15px; flex-shrink: 0; }
+        .qa-accordion.selected > .qa-accordion-header .qa-radio, .qa-panel.selected .qa-radio, .qa-plan-item.selected .qa-radio { background-color: #FF816B; border-color: #FF816B; }
+
+        .qa-accordion-title, .qa-panel-title { font-weight: 500; color: #452D0F; text-transform: uppercase; }
+        .qa-accordion-price, .qa-panel-price { font-weight: 500; color: #452D0F; }
+
+        .qa-plan-list { display: none; padding-left: 35px; margin-top: 15px; }
+        .qa-accordion.selected .qa-plan-list { display: block; }
+
+        .qa-plan-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+        .qa-plan-selection { display: flex; align-items: center; }
+        .qa-plan-label { color: #452D0F; }
+        .qa-plan-price { color: #452D0F; }
 
         .pl-image { position: relative; }
         .product-tag.list {
@@ -152,17 +158,22 @@ const _renderProductsToDOM = (products) => {
         const megaMember = product.mega_member;
 
         const memberPlanItems = childOptions.map(o => `
-            <div class="qa-sub-option" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
-                <div class="custom-radio"></div>
-                <label>${o.frequency_count} ${o.frequency_unit}</label>
-                <span>$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</span>
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-selection">
+                    <div class="qa-radio"></div>
+                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                </div>
+                <div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</div>
             </div>
         `).join('');
+
         const nonMemberPlanItems = childOptions.map(o => `
-            <div class="qa-sub-option" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
-                <div class="custom-radio"></div>
-                <label>${o.frequency_count} ${o.frequency_unit}</label>
-                <span>$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</span>
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-selection">
+                    <div class="qa-radio"></div>
+                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                </div>
+                <div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</div>
             </div>
         `).join('');
 
@@ -178,39 +189,43 @@ const _renderProductsToDOM = (products) => {
                     <div class="pl-meta product-prescription">${product.prescription || ''}</div>
                     <div class="pl-meta">$${(+product.lowest_price || 0).toFixed(0)}/mo</div>
                     <div class="qa-container" id="qa-container-${index}">
-                        <button class="button add-tocart-button w-button">ADD TO CART</button>
+                        <a href="/product/${product.sku}" class="button add-tocart-button w-button">ADD TO CART</a>
                         <div class="qa-popup">
-                            <div class="qa-options-container">
-                                <div class="qa-option member-pricing">
-                                    <div class="qa-option-header">
-                                        <div class="custom-radio"></div>
-                                        <label>MEMBER PRICING</label>
-                                        <span>FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</span>
+                            <div class="qa-accordion member-pricing">
+                                <div class="qa-accordion-header">
+                                    <div class="qa-header-content">
+                                        <div class="qa-radio"></div>
+                                        <div class="qa-accordion-title">Member Pricing</div>
                                     </div>
-                                    <div class="qa-option-content">
-                                        ${memberPlanItems}
-                                    </div>
+                                    <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div>
                                 </div>
-                                <div class="qa-option non-member-pricing">
-                                    <div class="qa-option-header">
-                                        <div class="custom-radio"></div>
-                                        <label>NON-MEMBERS</label>
-                                        <span>FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</span>
-                                    </div>
-                                    <div class="qa-option-content">
-                                        ${nonMemberPlanItems}
-                                    </div>
+                                <div class="qa-plan-list">
+                                    ${memberPlanItems}
                                 </div>
-                                ${megaMember ? `
-                                <div class="qa-option comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
-                                    <div class="qa-option-header">
-                                        <div class="custom-radio"></div>
-                                        <label>COMPREHENSIVE PANEL</label>
-                                        <span>$${parseFloat(megaMember.installment_price).toFixed(0)}/year</span>
-                                    </div>
-                                </div>
-                                ` : ''}
                             </div>
+                            <div class="qa-accordion non-member-pricing">
+                                <div class="qa-accordion-header">
+                                    <div class="qa-header-content">
+                                        <div class="qa-radio"></div>
+                                        <div class="qa-accordion-title">Non-Member</div>
+                                    </div>
+                                    <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div>
+                                </div>
+                                <div class="qa-plan-list">
+                                    ${nonMemberPlanItems}
+                                </div>
+                            </div>
+                            ${megaMember ? `
+                            <div class="qa-panel comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
+                                <div class="qa-panel-header">
+                                    <div class="qa-header-content">
+                                        <div class="qa-radio"></div>
+                                        <div class="qa-panel-title">Comprehensive Panel</div>
+                                    </div>
+                                    <div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -240,7 +255,10 @@ const setupQuickAddListeners = () => {
         containers.forEach(container => {
             if (!container.contains(e.target)) {
                 container.classList.remove('active', 'clicked');
-                container.querySelector('.add-tocart-button').textContent = 'ADD TO CART';
+                const button = container.querySelector('.add-tocart-button');
+                if (button) {
+                    hideButtonSpinner(button, 'ADD TO CART');
+                }
             }
         });
     });
@@ -249,71 +267,79 @@ const setupQuickAddListeners = () => {
         const quickAddBtn = container.querySelector('.add-tocart-button');
         const popup = container.querySelector('.qa-popup');
 
-        quickAddBtn.addEventListener('mouseenter', () => {
-            quickAddBtn.textContent = 'QUICK ADD';
-            popup.style.width = `${quickAddBtn.offsetWidth}px`;
-            container.classList.add('active');
-        });
+        quickAddBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent navigation
+            e.stopPropagation();
+            
+            const wasClicked = container.classList.contains('clicked');
+            
+            // Close all other popups
+            document.querySelectorAll('.qa-container').forEach(c => c.classList.remove('active', 'clicked'));
 
-        container.addEventListener('mouseleave', () => {
-             if (!container.classList.contains('clicked')) {
-                container.classList.remove('active');
-                quickAddBtn.textContent = 'ADD TO CART';
+            // Toggle current popup
+            if (!wasClicked) {
+                container.classList.add('active', 'clicked');
+                popup.style.width = `${quickAddBtn.offsetWidth}px`;
             }
         });
 
-        quickAddBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            container.classList.toggle('clicked');
-            container.classList.add('active');
-        });
-
-        const options = container.querySelectorAll('.qa-option');
-        const subOptions = container.querySelectorAll('.qa-sub-option');
+        const accordions = container.querySelectorAll('.qa-accordion');
+        const panel = container.querySelector('.qa-panel');
+        const allOptions = container.querySelectorAll('.qa-accordion, .qa-panel');
+        const allPlanItems = container.querySelectorAll('.qa-plan-item');
         const userIsMember = !!window.memerShip;
-        const comprehensivePanel = container.querySelector('.comprehensive-panel');
 
-        if (userIsMember && comprehensivePanel) {
-            comprehensivePanel.style.display = 'none';
+        if (userIsMember && panel) {
+            panel.style.display = 'none';
         }
 
-        options.forEach(option => {
+        allOptions.forEach(option => {
             option.addEventListener('click', (e) => {
                 e.stopPropagation();
+                const isAccordion = option.classList.contains('qa-accordion');
                 const isMemberPricing = option.classList.contains('member-pricing');
-                
-                options.forEach(opt => opt.classList.remove('selected', 'expanded'));
-                subOptions.forEach(subOpt => subOpt.classList.remove('selected'));
 
-                option.classList.add('selected');
-                if (option.querySelector('.qa-option-content')) {
-                    option.classList.add('expanded');
+                if (option.classList.contains('selected')) {
+                     if (isAccordion) { // If it's an accordion, toggle it
+                        option.classList.remove('selected');
+                     }
+                     return;
                 }
 
-                if (!userIsMember && isMemberPricing && comprehensivePanel) {
-                    comprehensivePanel.classList.add('selected');
+                allOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+
+                if (!userIsMember && isMemberPricing && panel) {
+                    panel.classList.add('selected');
+                } else if (!isMemberPricing) {
+                    panel.classList.remove('selected');
                 }
             });
         });
 
-        subOptions.forEach(item => {
+        allPlanItems.forEach(item => {
             item.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 
-                const parentOption = item.closest('.qa-option');
-                if (!parentOption) return;
+                const parentAccordion = item.closest('.qa-accordion');
+                if (!parentAccordion) return;
 
-                parentOption.parentElement.querySelectorAll('.qa-sub-option').forEach(i => i.classList.remove('selected'));
+                // Deselect other plan items within the same list
+                parentAccordion.querySelectorAll('.qa-plan-item').forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
                 
-                if (!parentOption.classList.contains('selected')) {
-                    parentOption.parentElement.querySelectorAll('.qa-option').forEach(i => i.classList.remove('selected', 'expanded'));
-                    parentOption.classList.add('selected', 'expanded');
+                // Ensure parent accordion is selected
+                if (!parentAccordion.classList.contains('selected')) {
+                    allOptions.forEach(i => i.classList.remove('selected'));
+                    parentAccordion.classList.add('selected');
+                     if (!userIsMember && parentAccordion.classList.contains('member-pricing') && panel) {
+                        panel.classList.add('selected');
+                    }
                 }
 
                 showButtonSpinner(quickAddBtn);
                 const isGuest = !window.authToken;
-                const isPanelSelected = comprehensivePanel && comprehensivePanel.classList.contains('selected');
+                const isPanelSelected = panel && panel.classList.contains('selected');
 
                 try {
                     let successMessage = 'Item added to cart!';
@@ -323,7 +349,7 @@ const setupQuickAddListeners = () => {
                         await addToCartAPI(planPayload, isGuest);
                     } else if (isPanelSelected) {
                         successMessage = 'Items added to cart!';
-                        const panelPayload = { sku: comprehensivePanel.dataset.sku, __co: [{ "__oid": parseInt(comprehensivePanel.dataset.oid), "__ov": parseInt(comprehensivePanel.dataset.vid) }], __q: 1 };
+                        const panelPayload = { sku: panel.dataset.sku, __co: [{ "__oid": parseInt(panel.dataset.oid), "__ov": parseInt(panel.dataset.vid) }], __q: 1 };
                         await addToCartAPI(panelPayload, isGuest);
                         await addToCartAPI(planPayload, isGuest);
                     } else {
