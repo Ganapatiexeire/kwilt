@@ -138,11 +138,23 @@
                     headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                     body: JSON.stringify(bodyData)
                 });
-                if (!response.ok) throw new Error('Failed to add item.');
+
+                if (!response.ok) {
+                    let errorMessage = `API request failed with status ${response.status}`;
+                    try {
+                        const result = await response.json();
+                        errorMessage = result.message || errorMessage;
+                    } catch (e) {
+                        // Ignore JSON parsing error, use the default message
+                    }
+                    const error = new Error(errorMessage);
+                    error.status = response.status;
+                    throw error; // Now throwing the error
+                }
                 return await response.json();
             } catch (error) {
                 console.error('addItem Error:', error);
-                return { success: false, message: error.message };
+                throw error; // Re-throw the error as a standard Error object
             }
         },
         applyCoupon: async (couponCode) => {
@@ -815,7 +827,12 @@
                         window.showToast(successMessage, 'success');
 
                     } catch (error) {
-                        window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                        console.error(error); // Keep for developers
+                        if (error.status && error.status !== 500) {
+                            window.showToast(error.message, 'error');
+                        } else {
+                            window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                        }
                     } finally {
                         setButtonLoading(quickAddBtn, false);
                         container.classList.remove('active', 'clicked');

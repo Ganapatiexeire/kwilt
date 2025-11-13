@@ -20,8 +20,21 @@ const addToCartAPI = async (payload, isGuest) => {
     }
     try {
         const response = await fetch(CART_API_URL, { method: 'POST', headers, body: JSON.stringify(payload) });
+        
+        if (!response.ok) {
+            let errorMessage = `API request failed with status ${response.status}`;
+            try {
+                const result = await response.json();
+                errorMessage = result.message || errorMessage;
+            } catch (e) {
+                // Ignore JSON parsing error, use the default message
+            }
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            throw error;
+        }
+
         const result = await response.json();
-        if (!response.ok) throw new Error(result.message || `API request failed`);
         if (isGuest && result.data && !getCartId()) setCartId(result.data);
         return result;
     } catch (error) {
@@ -407,7 +420,11 @@ const setupQuickAddListeners = () => {
                     window.showToast(successMessage, 'success');
                     if(window.toggleCart) window.toggleCart();
                 } catch (error) {
-                    window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                    if (error.status && error.status !== 500) {
+                        window.showToast(error.message, 'error');
+                    } else {
+                        window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                    }
                 } finally {
                     hideButtonSpinner(quickAddBtn, 'ADD TO CART');
                     container.classList.remove('active', 'clicked');

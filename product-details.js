@@ -215,11 +215,20 @@ const addToCartAPI = async (payload, isGuest) => {
             body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-
         if (!response.ok) {
-            throw new Error(result.message || `API request failed with status ${response.status}`);
+            let errorMessage = `API request failed with status ${response.status}`;
+            try {
+                const result = await response.json();
+                errorMessage = result.message || errorMessage;
+            } catch (e) {
+                // Ignore JSON parsing error, use the default message
+            }
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            throw error;
         }
+
+        const result = await response.json();
 
         // If it's a guest and a new cart ID is returned, save it.
         if (isGuest && result.data && !getCartId()) {
@@ -467,7 +476,11 @@ const setupEventListeners = (userState, productData) => {
 
                 console.error(error); // Keep for developers
                 hideButtonSpinner(addToCartButton);
-                window.showToast('There was a problem adding the item to your cart. Please try again.', 'error'); // User-friendly message
+                if (error.status && error.status !== 500) {
+                    window.showToast(error.message, 'error');
+                } else {
+                    window.showToast('There was a problem adding the item to your cart. Please try again.', 'error');
+                }
             } finally {
                 hideButtonSpinner(addToCartButton); // Ensure spinner is hidden on success or if catch re-throws
             }
