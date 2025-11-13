@@ -402,6 +402,12 @@
 
             .kwilt-recommended-add-btn .button-spinner { border-color: #452D0F; border-bottom-color: transparent; }
             .kwilt-summary-total-price{font-size:24px; font-weight:500;}
+            #kwilt-cart-items-container{
+                min-height:250px;
+            }
+            .comprehensive-panel{
+                background:#FFFFFF;
+            }
             `
             
         document.head.appendChild(style);
@@ -475,7 +481,7 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price ? item.monthly_price:item.row_total ).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
                 <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
                 <div class="kwilt-cart-item-footer">
                     <span class="kwilt-cart-item-price">$${parseFloat(item.row_total).toFixed(0)}</span>
