@@ -376,7 +376,7 @@
             .kwilt-recommended-item .qa-container.active .qa-popup { display: block; }
 
             .kwilt-recommended-item .qa-accordion, .kwilt-recommended-item .qa-panel { padding: 20px; cursor: pointer; border-bottom: 1px solid #aeaeae; background-color: #E0DDDD; }
-            .kwilt-recommended-item .qa-panel { background-color: #FFFFFF; }
+            .kwilt-recommended-item .qa-panel { background-color: #FFFBEB; }
             .kwilt-recommended-item .qa-accordion:last-of-type, .kwilt-recommended-item .qa-panel:last-of-type, .kwilt-recommended-item .qa-accordion + .qa-panel { border-bottom: none; }
 
             .kwilt-recommended-item .qa-accordion-header, .kwilt-recommended-item .qa-panel-header { display: flex; align-items: center; justify-content: space-between;width:100%; }
@@ -475,10 +475,10 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price ? item.monthly_price: item.price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.monthly_price).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
                 <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
                 <div class="kwilt-cart-item-footer">
-                    <span class="kwilt-cart-item-price">$${parseFloat(item.price).toFixed(0)}</span>
+                    <span class="kwilt-cart-item-price">$${parseFloat(item.row_total).toFixed(0)}</span>
                     <div class="kwilt-quantity-selector">
                         <button class="kwilt-quantity-btn" data-action="decrease-qty" data-item-id="${item.item_id}">-</button>
                         <span class="kwilt-quantity-value">${item.qty}</span>
@@ -630,14 +630,18 @@
 
     const setupRecommendedItemListeners = () => {
         const allContainers = document.querySelectorAll('.kwilt-cart-body .qa-container');
-        let leaveTimeout;
-
-        // Store original parent and nextSibling for each popup
-        const popupOriginalPositions = new Map();
 
         const resetPopupState = (container) => {
             if (container) {
                 container.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+                const popup = container.querySelector('.qa-popup');
+                if (popup && popup.getAttribute('data-kwilt-fixed') === 'true') {
+                    popup.style.position = '';
+                    popup.style.bottom = '';
+                    popup.style.left = '';
+                    popup.style.zIndex = '';
+                    popup.removeAttribute('data-kwilt-fixed');
+                }
             }
         };
 
@@ -649,20 +653,6 @@
                             resetPopupState(container);
                         }
                         container.classList.remove('active', 'clicked');
-                        // Ensure popup is moved back to original position if active
-                        const popup = container.querySelector('.qa-popup');
-                        if (popup && popupOriginalPositions.has(popup)) {
-                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
-                            if (nextSibling) {
-                                parent.insertBefore(popup, nextSibling);
-                            } else {
-                                parent.appendChild(popup);
-                            }
-                            popup.style.position = '';
-                            popup.style.top = '';
-                            popup.style.left = '';
-                            popup.style.width = '';
-                        }
                     }
                 });
             };
@@ -672,37 +662,15 @@
         allContainers.forEach(container => {
             const quickAddBtn = container.querySelector('.kwilt-recommended-add-btn-new');
             const popup = container.querySelector('.qa-popup');
+            const scrollContainer = container.closest('.kwilt-recommended-scroll-container');
 
-            // Store original position
-            if (popup && !popupOriginalPositions.has(popup)) {
-                popupOriginalPositions.set(popup, {
-                    parent: popup.parentNode,
-                    nextSibling: popup.nextSibling
-                });
-            }
-            
             const openPopup = () => {
-                clearTimeout(leaveTimeout);
                 allContainers.forEach(c => {
                     if (c !== container) {
                         if (c.classList.contains('active')) {
                            resetPopupState(c);
                         }
                         c.classList.remove('active', 'clicked');
-                        // Ensure other popups are moved back to original position
-                        const otherPopup = c.querySelector('.qa-popup');
-                        if (otherPopup && popupOriginalPositions.has(otherPopup)) {
-                            const { parent, nextSibling } = popupOriginalPositions.get(otherPopup);
-                            if (nextSibling) {
-                                parent.insertBefore(otherPopup, nextSibling);
-                            } else {
-                                parent.appendChild(otherPopup);
-                            }
-                            otherPopup.style.position = '';
-                            otherPopup.style.top = '';
-                            otherPopup.style.left = '';
-                            otherPopup.style.width = '';
-                        }
                     }
                 });
 
@@ -712,70 +680,41 @@
                 }
                 container.classList.add('active');
 
-                // --- Start: DOM Manipulation for positioning ---
+                // --- Start: Clipping Logic ---
+                popup.style.visibility = 'hidden';
+                const rect = popup.getBoundingClientRect();
+                const scrollRect = scrollContainer ? scrollContainer.getBoundingClientRect() : { top: 0, left: 0, right: window.innerWidth, bottom: window.innerHeight };
                 const btnRect = quickAddBtn.getBoundingClientRect();
-                const popupRect = popup.getBoundingClientRect(); // Get initial dimensions
+                popup.style.visibility = '';
 
-                // Calculate desired position relative to viewport
-                const desiredTop = btnRect.top - popupRect.height;
-                const desiredLeft = btnRect.left; // Align left with button
+                const popupAbsoluteTop = btnRect.top - rect.height;
+                const popupAbsoluteLeft = btnRect.right - rect.width;
 
-                // Move popup to body and position fixed
-                document.body.appendChild(popup);
-                popup.style.position = 'fixed';
-                popup.style.top = `${desiredTop}px`;
-                popup.style.left = `${desiredLeft}px`;
-                popup.style.width = `${recommendedItem.offsetWidth}px`; // Ensure width is maintained
-                // --- End: DOM Manipulation for positioning ---
-            };
-
-            const closePopup = () => {
-                leaveTimeout = setTimeout(() => {
-                    if (!container.classList.contains('clicked')) {
-                        container.classList.remove('active');
-                        resetPopupState(container);
-                        // Move popup back to original position
-                        if (popupOriginalPositions.has(popup)) {
-                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
-                            if (nextSibling) {
-                                parent.insertBefore(popup, nextSibling);
-                            } else {
-                                parent.appendChild(popup);
-                            }
-                            popup.style.position = '';
-                            popup.style.top = '';
-                            popup.style.left = '';
-                            popup.style.width = '';
-                        }
-                    }
-                }, 100);
+                if (popupAbsoluteTop < scrollRect.top || popupAbsoluteLeft < scrollRect.left) {
+                    popup.style.position = 'fixed';
+                    popup.style.bottom = `${window.innerHeight - btnRect.top}px`;
+                    popup.style.left = `${btnRect.right - rect.width}px`;
+                    popup.style.zIndex = '10001';
+                    popup.setAttribute('data-kwilt-fixed', 'true');
+                }
+                // --- End: Clipping Logic ---
             };
 
             container.addEventListener('mouseenter', openPopup);
-            container.addEventListener('mouseleave', closePopup);
-            popup.addEventListener('mouseenter', () => clearTimeout(leaveTimeout));
-            popup.addEventListener('mouseleave', closePopup);
+
+            container.addEventListener('mouseleave', () => {
+                if (!container.classList.contains('clicked')) {
+                    container.classList.remove('active');
+                    resetPopupState(container);
+                }
+            });
 
             quickAddBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                clearTimeout(leaveTimeout);
                 if (container.classList.contains('clicked')) {
                     container.classList.remove('clicked');
                     resetPopupState(container);
-                    // Move popup back to original position
-                    if (popupOriginalPositions.has(popup)) {
-                        const { parent, nextSibling } = popupOriginalPositions.get(popup);
-                        if (nextSibling) {
-                            parent.insertBefore(popup, nextSibling);
-                        } else {
-                            parent.appendChild(popup);
-                        }
-                        popup.style.position = '';
-                        popup.style.top = '';
-                        popup.style.left = '';
-                        popup.style.width = '';
-                    }
                 } else {
                     openPopup();
                     container.classList.add('clicked');
@@ -875,19 +814,6 @@
                         setButtonLoading(quickAddBtn, false);
                         container.classList.remove('active', 'clicked');
                         resetPopupState(container);
-                        // Move popup back to original position after action
-                        if (popupOriginalPositions.has(popup)) {
-                            const { parent, nextSibling } = popupOriginalPositions.get(popup);
-                            if (nextSibling) {
-                                parent.insertBefore(popup, nextSibling);
-                            } else {
-                                parent.appendChild(popup);
-                            }
-                            popup.style.position = '';
-                            popup.style.top = '';
-                            popup.style.left = '';
-                            popup.style.width = '';
-                        }
                     }
                 });
             });
@@ -1101,7 +1027,7 @@
                     console.log('Braze event fired: checkout_initiated', eventProperties);
                 }
 
-                let url = 'https://kwilt-vuejs-396730550724.us-central1.run.app/checkout'
+                let url = 'https://devapp.kwilthealth.com/checkout'
                 const cartId = localStorage.getItem(CART_ID_KEY) || null
                 if (window.authToken) {
                     url = url + `?t=${window.authToken}`

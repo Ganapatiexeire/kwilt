@@ -682,7 +682,7 @@
                     console.log('Braze event fired: checkout_initiated', eventProperties);
                 }
 
-                let url = 'https://kwilt-vuejs-396730550724.us-central1.run.app/checkout'
+                let url = 'https://devapp.kwilthealth.com/checkout'
                 const cartId = localStorage.getItem(CART_ID_KEY) || null
                 if (window.authToken) {
                     url = url + `?t=${window.authToken}`
