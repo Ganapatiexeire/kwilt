@@ -1,4 +1,30 @@
 (function () {
+    // --- COOKIE UTILITIES ---
+    window.setCookie = (name, value, days = 7, domain = '.kwilthealth.com') => {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=" + domain + "; SameSite=Lax; Secure";
+    };
+
+    window.getCookie = (name) => {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    };
+
+    window.deleteCookie = (name, domain = '.kwilthealth.com') => {
+        document.cookie = name + '=; Max-Age=-99999999; path=/; domain=' + domain;
+    };
+
     // --- API CONFIGURATION ---
     const API_BASE_URL = 'https://kwilt-order-396730550724.us-central1.run.app';
     const CART_ID_KEY = '__cid';
@@ -16,9 +42,9 @@
     };
 
     // --- API LAYER ---
-    const getCartId = () => localStorage.getItem(CART_ID_KEY);
-    const setCartId = (cartId) => localStorage.setItem(CART_ID_KEY, cartId);
-    const getAuthToken = () => localStorage.getItem('atkn');
+    const getCartId = () => getCookie(CART_ID_KEY);
+    const setCartId = (cartId) => setCookie(CART_ID_KEY, cartId, 30); // Set for 30 days
+    const getAuthToken = () => getCookie('atkn');
 
     const getAuthHeaders = () => {
         const authToken = getAuthToken();
@@ -509,7 +535,7 @@
     const renderRecommendedItem = (product, index) => {
         const childOptions = product.child_options || [];
         const megaMember = product.mega_member;
-        const userIsMember = !!(localStorage.getItem('atkn') && window.memerShip);
+        const userIsMember = !!(getCookie('atkn') && window.memerShip);
 
         const memberPlanItems = childOptions.map(o => `
             <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
@@ -1051,7 +1077,7 @@
                 }
 
                 let url = 'https://devapp.kwilthealth.com/checkout'
-                const cartId = localStorage.getItem(CART_ID_KEY) || null
+                const cartId = getCookie(CART_ID_KEY) || null
                 if (window.authToken) {
                     url = url + `?t=${window.authToken}`
                 } else if (cartId) {

@@ -4,7 +4,7 @@
     // --- API CONFIGURATION ---
     const API_BASE_URL = 'https://kwilt-order-396730550724.us-central1.run.app';
     const MYACCOUNT_API_BASE_URL = 'https://kwilt-myaccount-396730550724.us-central1.run.app';
-    const ATKN_KEY = 'atkn'; // Authentication token key in localStorage
+    const ATKN_KEY = 'atkn'; // Authentication token key
     const CART_ID_KEY = '__cid'; // Cart ID key from cart.js
 
     // --- STATE MANAGEMENT ---
@@ -29,8 +29,8 @@
     };
 
     // --- API LAYER ---
-    const getAuthToken = () => localStorage.getItem(ATKN_KEY);
-    const getCartId = () => localStorage.getItem(CART_ID_KEY);
+    const getAuthToken = () => getCookie(ATKN_KEY);
+    const getCartId = () => getCookie(CART_ID_KEY);
 
     const checkoutApi = {
         getCart: async () => {
@@ -82,14 +82,14 @@
             // This is a mock. Real implementation would call an auth API and set ATKN_KEY
             console.log('Mock Login:', { email, password });
             // On successful login, set a mock token
-            localStorage.setItem(ATKN_KEY, 'mock_auth_token_123');
+            setCookie(ATKN_KEY, 'mock_auth_token_123', 1);
             return { success: true, message: 'Logged in successfully.' };
         },
         signup: async (userData) => {
             // This is a mock. Real implementation would call a signup API and set ATKN_KEY
             console.log('Mock Signup:', userData);
             // On successful signup, set a mock token
-            localStorage.setItem(ATKN_KEY, 'mock_auth_token_123');
+            setCookie(ATKN_KEY, 'mock_auth_token_123', 1);
             return { success: true, message: 'Signed up successfully.' };
         },
         applyCoupon: async (couponCode) => {

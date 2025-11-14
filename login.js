@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             const data = await res.json();
             if (data && data.data) {
-                localStorage.setItem('atkn', data.data)
+                setCookie('atkn', data.data, 30); // Set auth token in cookie for 30 days
 
                 // Braze Tracking: Login Success
                 if (window.trackEvent) {
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
 
                 // --- NEW: Merge Cart Logic ---
-                const cartId = localStorage.getItem(CART_ID_KEY);
+                const cartId = getCookie(CART_ID_KEY); // Get cart ID from cookie
                 if (cartId) {
                     try {
                         const mergePayload = { "__cid": cartId };
@@ -181,8 +181,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                             console.error('Cart merge failed:', mergeErr.message || `API request failed with status ${mergeResponse.status}`);
                             // Do not throw error here, as login was successful. Just log.
                         } else {
-                            localStorage.removeItem(CART_ID_KEY); // Remove __cid on successful merge
-                            console.log('Cart merged successfully and __cid removed from localStorage.');
+                            deleteCookie(CART_ID_KEY); // Remove __cid cookie on successful merge
+                            console.log('Cart merged successfully and __cid removed from cookies.');
                         }
                     } catch (mergeError) {
                         console.error('Error during cart merge:', mergeError);
