@@ -519,8 +519,8 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name} Subscription - $${parseFloat(item.sku === "MEGA-MEMBERSHIP" ? item.row_total:item.monthly_price ).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
-                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name} supply</p>
+                <p class="kwilt-cart-item-plan">${item.plan_name.split(' ').joint('-')} Subscription - $${parseFloat(item.sku === "MEGA-MEMBERSHIP" ? item.row_total:item.monthly_price ).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name.split(' ').joint('-')} supply</p>
                 <div class="kwilt-cart-item-footer">
                     <span class="kwilt-cart-item-price">$${parseFloat(item.row_total).toFixed(0)}</span>
                     <div class="kwilt-quantity-selector">
@@ -541,7 +541,7 @@
             <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
                 <div class="qa-plan-selection">
                     <div class="qa-radio"></div>
-                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                    <div class="qa-plan-label">${o.plan_name}</div>
                 </div>
                 <div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</div>
             </div>
@@ -551,7 +551,7 @@
             <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
                 <div class="qa-plan-selection">
                     <div class="qa-radio"></div>
-                    <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                    <div class="qa-plan-label">${o.plan_name}</div>
                 </div>
                 <div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</div>
             </div>
@@ -559,7 +559,7 @@
 
         const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
         const price = defaultOption ? defaultOption.installment_price : product.lowest_price;
-        const supply_text = defaultOption ? `${defaultOption.frequency_count} ${defaultOption.frequency_unit} supply` : '';
+        const supply_text = defaultOption ? `${defaultOption.plan_name} supply` : '';
 
         return `
             <div class="kwilt-recommended-item" data-product-sku="${product.sku}">

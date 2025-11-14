@@ -134,7 +134,7 @@
             //     planItem.classList.add('selected');
             // }
             const price = parseFloat(option[priceKey]).toFixed(0);
-            const label = `${option.frequency_count} ${option.frequency_unit}`;
+            const label = `${option.plan_name}`;
             planItem.innerHTML = `
                 <div class="plan-radio"></div>
                 <div class="plan-details">

@@ -180,7 +180,7 @@
                 <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
-                        <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                        <div class="qa-plan-label">${o.plan_name}</div>
                     </div>
                     <div class="qa-plan-price">$${parseFloat(o.monthly_mega_member_installment_price).toFixed(0)}/month</div>
                 </div>
@@ -190,7 +190,7 @@
                 <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
-                        <div class="qa-plan-label">${o.frequency_count} ${o.frequency_unit}</div>
+                        <div class="qa-plan-label">${o.plan_name}</div>
                     </div>
                     <div class="qa-plan-price">$${parseFloat(o.monthly_installment_price).toFixed(0)}/month</div>
                 </div>
