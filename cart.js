@@ -446,6 +446,10 @@
             .comprehensive-panel{
                 background:#FFFFFF;
             }
+            .kwilt-cart-item-plan-name {
+                text-transform: lowercase;
+            }
+
             `
             
         document.head.appendChild(style);
@@ -519,8 +523,8 @@
                     <h4 class="kwilt-cart-item-name">${item.name}</h4>
                     <span class="kwilt-cart-item-remove" data-action="remove-item" data-item-id="${item.item_id}">&times;</span>
                 </div>
-                <p class="kwilt-cart-item-plan">${item.plan_name.split(' ').joint('-')} Subscription - $${parseFloat(item.sku === "MEGA-MEMBERSHIP" ? item.row_total:item.monthly_price ).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
-                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a ${item.plan_name.split(' ').joint('-')} supply</p>
+                <p class="kwilt-cart-item-plan"><span class="kwilt-cart-item-plan-name" > ${item.plan_name.split(' ').joint('-')} </span> Subscription - $${parseFloat(item.sku === "MEGA-MEMBERSHIP" ? item.row_total:item.monthly_price ).toFixed(0)}/${item.sku === "MEGA-MEMBERSHIP" ? 'year':'mo'}</p>
+                <p class="kwilt-cart-item-supply">$${parseFloat(item.row_total).toFixed(0)} for a <span class="kwilt-cart-item-plan-name" > ${item.plan_name.split(' ').joint('-')} </span> supply</p>
                 <div class="kwilt-cart-item-footer">
                     <span class="kwilt-cart-item-price">$${parseFloat(item.row_total).toFixed(0)}</span>
                     <div class="kwilt-quantity-selector">
