@@ -93,7 +93,7 @@
 
     const renderMainInfo = (product) => {
         document.querySelector('.name-product').textContent = product.product_name || 'Product Name';
-        document.querySelector('.product-descrition').textContent = product.short_description || 'No description available.';
+        // document.querySelector('.product-descrition').textContent = product.short_description || 'No description available.';
         document.querySelector('.pd-img').src = product.thumbnail || 'https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg';
     };
     const renderTags = (product) => {

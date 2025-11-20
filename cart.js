@@ -180,10 +180,16 @@
         },
         getRecommendedProducts: async () => {
             try {
+                
+                const authToken = getAuthToken();
+                let bodyData = {};
+                if (!authToken) {
+                    bodyData.__cid = getCartId();
+                }
                 const response = await fetch('https://kwilt-intake-396730550724.us-central1.run.app/products/recommended', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify(bodyData)
                 });
                 if (!response.ok) throw new Error('Failed to fetch recommended products.');
                 return await response.json();
@@ -1056,7 +1062,8 @@
                     console.log('Braze event fired: checkout_initiated', eventProperties);
                 }
 
-                let url = 'https://devapp.kwilthealth.com/checkout'
+                // let url = 'https://devapp.kwilthealth.com/checkout'
+                let url = 'http://localhost:5174/checkout'
                 const cartId = getCookie(CART_ID_KEY) || null
                 if (window.authToken) {
                     url = url + `?t=${window.authToken}`
