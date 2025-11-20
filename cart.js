@@ -1062,8 +1062,8 @@
                     console.log('Braze event fired: checkout_initiated', eventProperties);
                 }
 
-                // let url = 'https://devapp.kwilthealth.com/checkout'
-                let url = 'http://localhost:5174/checkout'
+                let url = 'https://devapp.kwilthealth.com/checkout'
+                // let url = 'http://localhost:5174/checkout'
                 const cartId = getCookie(CART_ID_KEY) || null
                 if (window.authToken) {
                     url = url + `?t=${window.authToken}`
