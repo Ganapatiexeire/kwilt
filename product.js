@@ -198,7 +198,7 @@
 
             const labRequiredTag = product.labs_required.length > 0 ? `<div id="labs-required" class="product-tag" style="display: block;"><div id="dot-mark" class="product-tag-style">LAB REQUIRED</div></div>` : '';
 
-            const bestSeller = product.bestseller ? `<div class="product-tag list best-seller"><div class="product-tag-style">BEST SELLER</div></div>` : '';
+            const bestSeller = product.bestseller ? `<div class="product-tag best-seller"><div class="product-tag-style">BEST SELLER</div></div>` : '';
             productElement.innerHTML = `
                 <div class="product-wrap">
                     <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29">${labRequiredTag} ${bestSeller}</a></div>
