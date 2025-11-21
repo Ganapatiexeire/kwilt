@@ -103,6 +103,8 @@
             labsRequiredTag.style.display = product.labs_required.length > 0 ? 'block' : 'none';
         }
         if (bestSellerTag) {
+            bestSellerTag.style.display = 'block';
+        }else{
             bestSellerTag.style.display = 'none';
         }
     };
