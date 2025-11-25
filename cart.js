@@ -244,7 +244,7 @@
             .kwilt-cart-overlay.active, .kwilt-cart-sidebar.active { opacity: 1; visibility: visible; }
             .kwilt-cart-sidebar.active { right: 0; }
             .kwilt-cart-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-            .kwilt-cart-header h2 { margin: 0; font-size: 32px; color: var(--kwilt-text-color); }
+            .kwilt-cart-header h2 { margin: 0; font-size: 32px; color: var(--kwilt-text-color); font-weight: 600 !important;}
             .kwilt-cart-exit { cursor: pointer; text-decoration: none; color: var(--kwilt-text-color); font-weight: 500; font-size:16px; }
             .kwilt-cart-body { flex-grow: 1; overflow-y: auto; padding: 20px; position: relative; }
             .kwilt-loader-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: transparent; display: flex; justify-content: center; align-items: center; z-index: 10; }
@@ -288,6 +288,12 @@
                 margin-right: 16px; /* Space between items */
                 min-width: 350px; /* Increased width for content */
                 min-height:110px;
+            }
+
+            @media (max-width: 600px) {
+                .kwilt-recommended-item {
+                    min-width: 300px;
+                }
             }
 
             .kwilt-cart-footer { padding: 20px; border-top: 1px solid #eee; background:white; box-shadow: -5px 0 15px rgba(0,0,0,0.1)}
