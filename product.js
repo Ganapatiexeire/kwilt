@@ -204,7 +204,7 @@
                     <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29">${labRequiredTag} ${bestSeller}</a></div>
                     <div class="pl-content">
                         <div class="product-name">${product.product_name}</div>
-                        <div class="pl-meta product-prescription">${product.prescription || ''}</div>
+                        <div class="pl-meta product-prescription">${product.subtitle || ''}</div>
                         <div class="pl-meta">$${(+product.lowest_price || 0).toFixed(0)}/mo</div>
                         <div class="qa-container" id="qa-container-${index}">
                             <a href="/product/${product.sku}" class="button add-tocart-button w-button">ADD TO CART</a>
