@@ -415,7 +415,7 @@
                             await addToCartAPI(planPayload, isGuest);
                         }
 
-                        window.showToast(successMessage, 'success');
+                        // window.showToast(successMessage, 'success');
                         if(window.toggleCart) window.toggleCart();
                     } catch (error) {
                         if (error.status && error.status !== 500) {

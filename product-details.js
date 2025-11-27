@@ -461,7 +461,7 @@
                     }
 
                     // Common success handling
-                    window.showToast(successMessage, 'success');
+                    // window.showToast(successMessage, 'success');
                     window.toggleCart();
 
                 } catch (error) {
