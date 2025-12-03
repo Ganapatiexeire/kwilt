@@ -147,10 +147,12 @@
         const elementPosition = container.getBoundingClientRect().top + window.pageYOffset;
         const offsetPosition = elementPosition - offset;
 
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-        });
+        setTimeout(() => {
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }, 300); // 300ms delay to allow other scripts to finish
 
         container.innerHTML = '';
 
