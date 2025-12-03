@@ -152,7 +152,7 @@
                 top: offsetPosition,
                 behavior: 'smooth'
             });
-        }, 300); // 300ms delay to allow other scripts to finish
+        }, 500); 
 
         container.innerHTML = '';
 
