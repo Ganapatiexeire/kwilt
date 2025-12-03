@@ -127,9 +127,9 @@
 
     // --- End: UI Styles and Helpers ---
 
-    const fetchProducts = async (payload = {}) => {
+    const fetchProducts = async () => {
         try {
-            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
             if (!response.ok) throw new Error(`API request failed`);
             const data = await response.json();
             return data.data.products || [];
@@ -196,7 +196,7 @@
                 </div>
             `).join('');
 
-            const labRequiredTag = product.labs_required.length > 0 ? `<div id="labs-required" class="product-tag" style="display: block;"><div id="dot-mark" class="product-tag-style">LAB REQUIRED</div></div>` : '';
+            const labRequiredTag = (Array.isArray(product.labs_required) && product.labs_required.length > 0) ? `<div id="labs-required" class="product-tag" style="display: block;"><div id="dot-mark" class="product-tag-style">LAB REQUIRED</div></div>` : '';
 
             const bestSeller = product.bestseller ? `<div class="product-tag best-seller"><div class="product-tag-style">BEST SELLER</div></div>` : '';
             productElement.innerHTML = `
@@ -454,10 +454,8 @@
         _renderProductsToDOM([]);
         return;
       }
-       const payload = {
-        "category" : {"in" : [categorySlug]}
-      };
-      const filteredProducts = await fetchProducts(payload);
+      const allProducts = await fetchProducts();
+      const filteredProducts = allProducts.filter(p =>p.category && p.category.some(c =>c.toLowerCase().replace(/\s+/g, '-') === categorySlug));
       _renderProductsToDOM(filteredProducts);
     };
 })();
