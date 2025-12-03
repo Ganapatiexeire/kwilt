@@ -127,9 +127,9 @@
 
     // --- End: UI Styles and Helpers ---
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (payload = {}) => {
         try {
-            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (!response.ok) throw new Error(`API request failed`);
             const data = await response.json();
             return data.data.products || [];
@@ -454,8 +454,10 @@
         _renderProductsToDOM([]);
         return;
       }
-      const allProducts = await fetchProducts();
-      const filteredProducts = allProducts.filter(p =>p.category && p.category.some(c =>c.toLowerCase().replace(/\s+/g, '-') === categorySlug));
+       const payload = {
+        "category" : {"in" : [categorySlug]}
+      };
+      const filteredProducts = await fetchProducts(payload);
       _renderProductsToDOM(filteredProducts);
     };
 })();
