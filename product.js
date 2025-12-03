@@ -148,6 +148,7 @@
         const offsetPosition = elementPosition - offset;
 
         setTimeout(() => {
+            console.log(elementPosition,offsetPosition)
             window.scrollTo({
                 top: offsetPosition,
                 behavior: 'smooth'
