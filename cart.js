@@ -741,19 +741,64 @@
             container.addEventListener('mouseleave', () => {
                 if (!container.classList.contains('clicked')) {
                     container.classList.remove('active');
-                    resetPopupState(container);
+                    // DO NOT reset state on mouseleave
                 }
             });
 
-            quickAddBtn.addEventListener('click', (e) => {
+            quickAddBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (container.classList.contains('clicked')) {
-                    container.classList.remove('clicked');
+
+                const selectedPlanItem = container.querySelector('.qa-plan-item.selected');
+
+                if (!selectedPlanItem) {
+                    // If no plan selected, just open/toggle the popup
+                    if (container.classList.contains('clicked')) {
+                        container.classList.remove('clicked');
+                        resetPopupState(container);
+                    } else {
+                        openPopup();
+                        container.classList.add('clicked');
+                    }
+                    return; // Stop here
+                }
+                
+                // If a plan IS selected, proceed to add to cart
+                setButtonLoading(quickAddBtn, true);
+                const userIsMember = !!window.memerShip;
+                const panel = container.querySelector('.qa-panel');
+                const isPanelSelected = panel && panel.classList.contains('selected');
+                
+                try {
+                    let successMessage = 'Item added to cart!';
+                    const item = selectedPlanItem;
+                    const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
+
+                    if (userIsMember) {
+                        await cartApi.addItem(planPayload);
+                    } else if (isPanelSelected) {
+                        successMessage = 'Items added to cart!';
+                        const panelPayload = { sku: panel.dataset.sku, __co: [{ "__oid": parseInt(panel.dataset.oid), "__ov": parseInt(panel.dataset.vid) }], __q: 1 };
+                        await cartApi.addItem(panelPayload);
+                        await cartApi.addItem(planPayload);
+                    } else {
+                        await cartApi.addItem(planPayload);
+                    }
+                    
+                    await refreshCart();
+                    window.showToast(successMessage, 'success');
+
+                } catch (error) {
+                    console.error(error); // Keep for developers
+                    if (error.status && error.status !== 500) {
+                        window.showToast(error.message, 'error');
+                    } else {
+                        window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
+                    }
+                } finally {
+                    setButtonLoading(quickAddBtn, false);
+                    container.classList.remove('active', 'clicked');
                     resetPopupState(container);
-                } else {
-                    openPopup();
-                    container.classList.add('clicked');
                 }
             });
 
@@ -801,7 +846,7 @@
             });
 
             allPlanItems.forEach(item => {
-                item.addEventListener('click', async (e) => {
+                item.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const parentAccordion = item.closest('.qa-accordion');
                     if (!parentAccordion) return;
@@ -820,41 +865,6 @@
                         } else {
                             panel.classList.remove('selected');
                         }
-                    }
-
-                    setButtonLoading(quickAddBtn, true);
-                    const isGuest = !getAuthToken();
-                    const isPanelSelected = panel && panel.classList.contains('selected');
-
-                    try {
-                        let successMessage = 'Item added to cart!';
-                        const planPayload = { sku: item.dataset.sku, __co: [{ "__oid": parseInt(item.dataset.oid), "__ov": parseInt(item.dataset.vid) }], __q: 1 };
-
-                        if (userIsMember) {
-                            await cartApi.addItem(planPayload);
-                        } else if (isPanelSelected) {
-                            successMessage = 'Items added to cart!';
-                            const panelPayload = { sku: panel.dataset.sku, __co: [{ "__oid": parseInt(panel.dataset.oid), "__ov": parseInt(panel.dataset.vid) }], __q: 1 };
-                            await cartApi.addItem(panelPayload);
-                            await cartApi.addItem(planPayload);
-                        } else {
-                            await cartApi.addItem(planPayload);
-                        }
-                        
-                        await refreshCart();
-                        window.showToast(successMessage, 'success');
-
-                    } catch (error) {
-                        console.error(error); // Keep for developers
-                        if (error.status && error.status !== 500) {
-                            window.showToast(error.message, 'error');
-                        } else {
-                            window.showToast('There was a problem adding items to your cart. Please try again.', 'error');
-                        }
-                    } finally {
-                        setButtonLoading(quickAddBtn, false);
-                        container.classList.remove('active', 'clicked');
-                        resetPopupState(container);
                     }
                 });
             });

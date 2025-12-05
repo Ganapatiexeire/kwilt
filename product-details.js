@@ -100,7 +100,7 @@
         const labsRequiredTag = document.getElementById('labs-required');
         const bestSellerTag = document.getElementById('best-seller');
         if (labsRequiredTag) {
-            labsRequiredTag.style.display = product.labs_required.length > 0 ? 'block' : 'none';
+            labsRequiredTag.style.display = (Array.isArray(product.labs_required) && product.labs_required.length > 0) > 0 ? 'block' : 'none';
         }
         if (bestSellerTag) {
             bestSellerTag.style.display = 'block';
