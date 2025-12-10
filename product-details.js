@@ -113,7 +113,7 @@
         const memberPriceContainer = document.querySelector('#member-pricing-accord .pricing-body-content');
         const memberPriceHeader = document.querySelector('#member-pricing-accord .member-price');
         if (memberPriceContainer && memberPriceHeader) {
-            const memberPrices = child_options.map(p => parseFloat(p.mega_member_installment_price)).filter(p => !isNaN(p));
+            const memberPrices = child_options.map(p => parseFloat(p.monthly_mega_member_installment_price)).filter(p => !isNaN(p));
             const lowestMemberPrice = memberPrices.length > 0 ? Math.min(...memberPrices) : 0;
             memberPriceHeader.textContent = `FROM $${lowestMemberPrice.toFixed(0)}`;
             renderPlanOptions(memberPriceContainer, child_options, 'monthly_mega_member_installment_price', true);
@@ -121,7 +121,7 @@
         const nonMemberPriceContainer = document.querySelector('#non-member-accord .pricing-body-content');
         const nonMemberPriceHeader = document.querySelector('#non-member-accord .non-member-price');
         if (nonMemberPriceContainer && nonMemberPriceHeader) {
-            const nonMemberPrices = child_options.map(p => parseFloat(p.installment_price)).filter(p => !isNaN(p));
+            const nonMemberPrices = child_options.map(p => parseFloat(p.monthly_installment_price)).filter(p => !isNaN(p));
             const lowestNonMemberPrice = nonMemberPrices.length > 0 ? Math.min(...nonMemberPrices) : 0;
             nonMemberPriceHeader.textContent = `FROM $${lowestNonMemberPrice.toFixed(0)}`;
             renderPlanOptions(nonMemberPriceContainer, child_options, 'monthly_installment_price', false);
@@ -156,7 +156,7 @@
     const renderComprehensivePanel = (product) => {
         const panelPrice = document.querySelector('.comprehensive-panel .cp-price');
         if (panelPrice && product.mega_member) {
-            const price = parseFloat(product.mega_member.installment_price).toFixed(0);
+            const price = parseFloat(product.mega_member.monthly_installment_price).toFixed(0);
             panelPrice.textContent = `$${price}/year`;
         }
     };

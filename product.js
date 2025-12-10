@@ -200,10 +200,10 @@
 
             const bestSeller = product.bestseller ? `<div class="product-tag best-seller"><div class="product-tag-style">BEST SELLER</div></div>` : '';
             
-            const memberPrices = childOptions.map(o => parseFloat(o.mega_member_installment_price)).filter(p => !isNaN(p));
+            const memberPrices = childOptions.map(o => parseFloat(o.monthly_mega_member_installment_price)).filter(p => !isNaN(p));
             const lowestMemberPrice = memberPrices.length > 0 ? Math.min(...memberPrices) : 0;
 
-            const nonMemberPrices = childOptions.map(o => parseFloat(o.installment_price)).filter(p => !isNaN(p));
+            const nonMemberPrices = childOptions.map(o => parseFloat(o.monthly_installment_price)).filter(p => !isNaN(p));
             const lowestNonMemberPrice = nonMemberPrices.length > 0 ? Math.min(...nonMemberPrices) : 0;
 
             productElement.innerHTML = `
@@ -247,7 +247,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-panel-title">Comprehensive Panel</div>
                                         </div>
-                                        <div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div>
+                                        <div class="qa-panel-price">$${parseFloat(megaMember.monthly_installment_price).toFixed(0)}/year</div>
                                     </div>
                                 </div>
                                 ` : ''}
