@@ -621,7 +621,7 @@
     const renderSummary = () => `
         <div class="kwilt-summary-row"><span>Subtotal:</span><span>$${cartState.subtotal.toFixed(2)}</span></div>
         <div class="kwilt-summary-row"><span>FREE SHIPPING:</span><span>${cartState.shipping === 0 ? '$0.00': '$' + cartState.shipping.toFixed(2)}</span></div>
-        ${cartState.discount.amount > 0 ? `<div class="kwilt-summary-row"><span>Discount:</span><span>-$${Math.abs(cartState.discount.amount).toFixed(2)}</span></div>` : ''}
+        ${cartState.discount.codes.length > 0 ? `<div class="kwilt-summary-row"><span>Discount:</span><span>-$${Math.abs(cartState.discount.amount).toFixed(2)}</span></div>` : ''}
         <div class="kwilt-summary-row kwilt-summary-total"><span>Total:</span><span class="kwilt-summary-total-price">$${cartState.total.toFixed(2)}</span></div>`;
 
     const _getCouponSectionHtml = () => {
