@@ -12,7 +12,10 @@
         subtotal: 0,
         shipping: 0,
         total: 0,
-        discount: null,
+        discount: {
+            codes: [],
+            amount: 0
+        },
         isOpened: false,
         isLoading: false,
     };
@@ -198,9 +201,9 @@
                 return { success: false, message: error.message };
             }
         },
-        removeCoupon: async () => {
+        removeCoupon: async (couponCode) => {
             const authToken = getAuthToken();
-            let bodyData = { coupon_code: cartState.discount ? cartState.discount.code : null };
+            let bodyData = { coupon_code: couponCode };
             if (!authToken) {
                 bodyData.__cid = getCartId();
             }
@@ -618,7 +621,7 @@
     const renderSummary = () => `
         <div class="kwilt-summary-row"><span>Subtotal:</span><span>$${cartState.subtotal.toFixed(2)}</span></div>
         <div class="kwilt-summary-row"><span>FREE SHIPPING:</span><span>${cartState.shipping === 0 ? '$0.00': '$' + cartState.shipping.toFixed(2)}</span></div>
-        ${cartState.discount ? `<div class="kwilt-summary-row"><span>Discount (${cartState.discount.code}):</span><span>-$${Math.abs(cartState.discount.amount).toFixed(2)}</span></div>` : ''}
+        ${cartState.discount.amount > 0 ? `<div class="kwilt-summary-row"><span>Discount:</span><span>-$${Math.abs(cartState.discount.amount).toFixed(2)}</span></div>` : ''}
         <div class="kwilt-summary-row kwilt-summary-total"><span>Total:</span><span class="kwilt-summary-total-price">$${cartState.total.toFixed(2)}</span></div>`;
 
     const _getCouponSectionHtml = () => {
@@ -628,12 +631,13 @@
                 <button class="kwilt-discount-btn" data-action="apply-discount">Apply</button>
             </div>`;
 
-        if (cartState.discount) {
-            couponHtml += `
+        if (cartState.discount.codes.length > 0) {
+            couponHtml += cartState.discount.codes.map(code => `
                 <div class="kwilt-applied-coupon">
-                    <span>${cartState.discount.code}</span>
-                    <button class="kwilt-applied-coupon-remove" data-action="remove-coupon">&times;</button>
-                </div>`;
+                    <span>${code}</span>
+                    <button class="kwilt-applied-coupon-remove" data-action="remove-coupon" data-coupon-code="${code}">&times;</button>
+                </div>
+            `).join('');
         }
         return couponHtml;
     };
@@ -650,11 +654,14 @@
         cartState.subtotal = parseFloat(apiData.cart_total.subtotal || 0);
         cartState.total = parseFloat(apiData.cart_total.grand_total || 0);
         cartState.shipping = parseFloat(apiData.cart_total.shipping_amount || 0);
-        const coupon = apiData.applied_coupons;
-        if (coupon) {
-            cartState.discount = { code: coupon, amount: parseFloat(apiData.cart_total.discount_amount || 0) };
+
+        const coupons = apiData.applied_coupons;
+        if (coupons && typeof coupons === 'string') {
+            cartState.discount.codes = coupons.split(',');
+            cartState.discount.amount = parseFloat(apiData.cart_total.discount_amount || 0);
         } else {
-            cartState.discount = null;
+            cartState.discount.codes = [];
+            cartState.discount.amount = 0;
         }
 
         // Fetch and filter recommended items
@@ -997,15 +1004,18 @@
             }
             case 'remove-coupon': {
                 const removeButton = e.target.closest('button');
-                setButtonLoading(removeButton, true);
-                const result = await cartApi.removeCoupon();
-                if (!result.success) {
-                    window.showToast('Failed to remove coupon. Please try again.', 'error');
-                } else {
-                    window.showToast('Coupon removed.', 'success');
+                const codeToRemove = e.target.dataset.couponCode;
+                if (codeToRemove) {
+                    setButtonLoading(removeButton, true);
+                    const result = await cartApi.removeCoupon(codeToRemove);
+                    if (!result.success) {
+                        window.showToast('Failed to remove coupon. Please try again.', 'error');
+                    } else {
+                        window.showToast('Coupon removed.', 'success');
+                    }
+                    await refreshCart();
+                    setButtonLoading(removeButton, false);
                 }
-                await refreshCart();
-                setButtonLoading(removeButton, false);
                 break;
             }
         }
