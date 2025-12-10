@@ -199,6 +199,13 @@
             const labRequiredTag = (Array.isArray(product.labs_required) && product.labs_required.length > 0) ? `<div id="labs-required" class="product-tag" style="display: block;"><div id="dot-mark" class="product-tag-style">LAB REQUIRED</div></div>` : '';
 
             const bestSeller = product.bestseller ? `<div class="product-tag best-seller"><div class="product-tag-style">BEST SELLER</div></div>` : '';
+            
+            const memberPrices = childOptions.map(o => parseFloat(o.mega_member_installment_price)).filter(p => !isNaN(p));
+            const lowestMemberPrice = memberPrices.length > 0 ? Math.min(...memberPrices) : 0;
+
+            const nonMemberPrices = childOptions.map(o => parseFloat(o.installment_price)).filter(p => !isNaN(p));
+            const lowestNonMemberPrice = nonMemberPrices.length > 0 ? Math.min(...nonMemberPrices) : 0;
+
             productElement.innerHTML = `
                 <div class="product-wrap">
                     <div class="pl-image"><a href="/product/${product.sku}" class="fullwidth w-inline-block"><img src="${product.thumbnail}" loading="lazy" alt="${product.product_name}" class="image-29">${labRequiredTag} ${bestSeller}</a></div>
@@ -215,7 +222,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-accordion-title">Member Pricing</div>
                                         </div>
-                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div>
+                                        <div class="qa-accordion-price">FROM $${lowestMemberPrice.toFixed(0)}</div>
                                     </div>
                                     <div class="qa-plan-list">
                                         ${memberPlanItems}
@@ -227,7 +234,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-accordion-title">Non-Member</div>
                                         </div>
-                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div>
+                                        <div class="qa-accordion-price">FROM $${lowestNonMemberPrice.toFixed(0)}</div>
                                     </div>
                                     <div class="qa-plan-list">
                                         ${nonMemberPlanItems}

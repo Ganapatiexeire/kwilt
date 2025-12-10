@@ -115,7 +115,7 @@
         if (memberPriceContainer && memberPriceHeader) {
             const memberPrices = child_options.map(p => parseFloat(p.mega_member_installment_price)).filter(p => !isNaN(p));
             const lowestMemberPrice = memberPrices.length > 0 ? Math.min(...memberPrices) : 0;
-            memberPriceHeader.textContent = `from $${lowestMemberPrice.toFixed(0)}`;
+            memberPriceHeader.textContent = `FROM $${lowestMemberPrice.toFixed(0)}`;
             renderPlanOptions(memberPriceContainer, child_options, 'monthly_mega_member_installment_price', true);
         }
         const nonMemberPriceContainer = document.querySelector('#non-member-accord .pricing-body-content');
@@ -123,7 +123,7 @@
         if (nonMemberPriceContainer && nonMemberPriceHeader) {
             const nonMemberPrices = child_options.map(p => parseFloat(p.installment_price)).filter(p => !isNaN(p));
             const lowestNonMemberPrice = nonMemberPrices.length > 0 ? Math.min(...nonMemberPrices) : 0;
-            nonMemberPriceHeader.textContent = `from $${lowestNonMemberPrice.toFixed(0)}`;
+            nonMemberPriceHeader.textContent = `FROM $${lowestNonMemberPrice.toFixed(0)}`;
             renderPlanOptions(nonMemberPriceContainer, child_options, 'monthly_installment_price', false);
         }
     };

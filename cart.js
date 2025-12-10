@@ -549,6 +549,12 @@
             </div>
         `).join('');
 
+        const memberPrices = childOptions.map(o => parseFloat(o.mega_member_installment_price)).filter(p => !isNaN(p));
+        const lowestMemberPrice = memberPrices.length > 0 ? Math.min(...memberPrices) : 0;
+
+        const nonMemberPrices = childOptions.map(o => parseFloat(o.installment_price)).filter(p => !isNaN(p));
+        const lowestNonMemberPrice = nonMemberPrices.length > 0 ? Math.min(...nonMemberPrices) : 0;
+
         const defaultOption = product.child_options && product.child_options.length > 0 ? product.child_options[0] : null;
         const price = defaultOption ? defaultOption.installment_price : product.lowest_price;
         const supply_text = defaultOption ? `${defaultOption.plan_name} supply` : '';
@@ -568,7 +574,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-accordion-title">Member Pricing</div>
                                         </div>
-                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].mega_member_installment_price).toFixed(0) : ''}</div>
+                                        <div class="qa-accordion-price">FROM $${lowestMemberPrice.toFixed(0)}</div>
                                     </div>
                                     <div class="qa-plan-list">
                                         ${memberPlanItems}
@@ -580,7 +586,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-accordion-title">Non-Member</div>
                                         </div>
-                                        <div class="qa-accordion-price">FROM $${childOptions.length > 0 ? parseFloat(childOptions[0].installment_price).toFixed(0) : ''}</div>
+                                        <div class="qa-accordion-price">FROM $${lowestNonMemberPrice.toFixed(0)}</div>
                                     </div>
                                     <div class="qa-plan-list">
                                         ${nonMemberPlanItems}
