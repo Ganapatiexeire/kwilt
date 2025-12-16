@@ -247,7 +247,7 @@
                                             <div class="qa-radio"></div>
                                             <div class="qa-panel-title">Comprehensive Panel</div>
                                         </div>
-                                        <div class="qa-panel-price">$${parseFloat(megaMember.monthly_installment_price).toFixed(0)}/year</div>
+                                        <div class="qa-panel-price">$${parseFloat(megaMember.installment_price).toFixed(0)}/year</div>
                                     </div>
                                 </div>
                                 ` : ''}

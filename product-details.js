@@ -156,7 +156,7 @@
     const renderComprehensivePanel = (product) => {
         const panelPrice = document.querySelector('.comprehensive-panel .cp-price');
         if (panelPrice && product.mega_member) {
-            const price = parseFloat(product.mega_member.monthly_installment_price).toFixed(0);
+            const price = parseFloat(product.mega_member.installment_price).toFixed(0);
             panelPrice.textContent = `$${price}/year`;
         }
     };
