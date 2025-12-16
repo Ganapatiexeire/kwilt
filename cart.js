@@ -247,7 +247,7 @@
             .kwilt-cart-overlay.active, .kwilt-cart-sidebar.active { opacity: 1; visibility: visible; }
             .kwilt-cart-sidebar.active { right: 0; }
             .kwilt-cart-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-            .kwilt-cart-header h2 { margin: 0; font-size: 32px; color: var(--kwilt-text-color); font-weight: 600 !important;}
+            .kwilt-cart-header h2 { margin: 0; font-size: 32px; color: var(--kwilt-text-color); font-weight: 500 !important; font-family: 'Denimink';}
             .kwilt-cart-exit { cursor: pointer; text-decoration: none; color: var(--kwilt-text-color); font-weight: 500; font-size:16px; }
             .kwilt-cart-body { flex-grow: 1; overflow-y: auto; padding: 20px; position: relative; }
             .kwilt-loader-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: transparent; display: flex; justify-content: center; align-items: center; z-index: 10; }
