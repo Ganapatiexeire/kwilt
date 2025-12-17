@@ -1094,7 +1094,7 @@
                     console.log('Braze event fired: checkout_initiated', eventProperties);
                 }
 
-                let url = window.dashboardUrl
+                let url = window.dashboardUrl+'checkout'
                 // let url = 'http://localhost:5174/checkout'
                 const cartId = getCookie(CART_ID_KEY) || null
                 if (window.authToken) {
