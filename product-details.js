@@ -1,5 +1,5 @@
 (function () {
-    const API_BASE_URL = 'https://kwilt-intake-396730550724.us-central1.run.app/product-info'
+    const API_BASE_URL = API_INTAKE + '/product-info'
 
     const injectLoaderStyles = () => {
         if (document.getElementById('kwilt-product-detail-styles')) return;
@@ -169,7 +169,7 @@
 
 
     // --- NEW: Cart Management and API Layer ---
-    const CART_API_URL = 'https://kwilt-order-396730550724.us-central1.run.app/nonrx-cart/addItemToCart';
+    
     const CART_ID_KEY = '__cid';
 
     /**

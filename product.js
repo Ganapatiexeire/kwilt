@@ -1,10 +1,10 @@
 (function () {
-    const API_URL = 'https://kwilt-intake-396730550724.us-central1.run.app/products';
+    
 
     window.kwiltProductUtils = window.kwiltProductUtils || {};
 
     // --- START: Cart Management ---
-    const CART_API_URL = 'https://kwilt-order-396730550724.us-central1.run.app/nonrx-cart/addItemToCart';
+    
     const CART_ID_KEY = '__cid';
     const getCartId = () => window.getCookie(CART_ID_KEY);
     const setCartId = (cartId) => { if (cartId) window.setCookie(CART_ID_KEY, cartId, 30); };

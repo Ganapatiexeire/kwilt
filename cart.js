@@ -2,7 +2,7 @@
     
 
     // --- API CONFIGURATION ---
-    const API_BASE_URL = 'https://kwilt-order-396730550724.us-central1.run.app';
+
     const CART_ID_KEY = '__cid';
 
     // --- STATE MANAGEMENT ---
@@ -189,7 +189,7 @@
                 if (!authToken) {
                     bodyData.__cid = getCartId();
                 }
-                const response = await fetch('https://kwilt-intake-396730550724.us-central1.run.app/products/recommended', {
+                const response = await fetch(API_INTAKE+'/products/recommended', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                     body: JSON.stringify(bodyData)
