@@ -258,11 +258,7 @@
 
             const comprehensivePanel = document.querySelector('.comprehensive-panel');
             if (comprehensivePanel) {
-                if (userState.isLoggedIn && userState.isMember) {
-                    comprehensivePanel.classList.add('disabled');
-                } else {
-                    comprehensivePanel.classList.remove('disabled');
-                }
+                 comprehensivePanel.style.display = (userState.isLoggedIn && userState.isMember) ? 'none' : 'flex';
             }
             const nonMemberAccordion = document.getElementById('non-member-accord');
             if (nonMemberAccordion) {
