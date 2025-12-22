@@ -440,6 +440,10 @@
             .kwilt-cart-item-plan-name {
                 text-transform: lowercase;
             }
+            .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
 
             `
             
@@ -583,7 +587,8 @@
                                         ${memberPlanItems}
                                     </div>
                                 </div>
-                                <div class="qa-accordion non-member-pricing">
+                                
+                                <div class="qa-accordion non-member-pricing ${userIsMember ? 'disabled' : ''}">
                                     <div class="qa-accordion-header">
                                         <div class="qa-header-content">
                                             <div class="qa-radio"></div>
@@ -595,8 +600,8 @@
                                         ${nonMemberPlanItems}
                                     </div>
                                 </div>
-                                ${megaMember && !userIsMember ? `
-                                <div class="qa-panel comprehensive-panel" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
+                                ${megaMember ? `
+                                <div class="qa-panel comprehensive-panel ${userIsMember ? 'disabled' : ''}" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
                                     <div class="qa-panel-header">
                                         <div class="qa-header-content">
                                             <div class="qa-radio"></div>

@@ -33,6 +33,7 @@
             .comprehensive-panel.selected .cp-check { display: block; }
             .comprehensive-panel.selected .cp-uncheck { display: none; }
             .accordion-item.open .accordion-content { display: block; }
+            .disabled { opacity: 0.5; pointer-events: none; }
         `;
         document.head.appendChild(style);   
     };
@@ -257,7 +258,19 @@
 
             const comprehensivePanel = document.querySelector('.comprehensive-panel');
             if (comprehensivePanel) {
-                comprehensivePanel.style.display = (userState.isLoggedIn && userState.isMember) ? 'none' : 'flex';
+                if (userState.isLoggedIn && userState.isMember) {
+                    comprehensivePanel.classList.add('disabled');
+                } else {
+                    comprehensivePanel.classList.remove('disabled');
+                }
+            }
+            const nonMemberAccordion = document.getElementById('non-member-accord');
+            if (nonMemberAccordion) {
+                if (userState.isLoggedIn && userState.isMember) {
+                    nonMemberAccordion.classList.add('disabled');
+                } else {
+                    nonMemberAccordion.classList.remove('disabled');
+                }
             }
         }
     };
