@@ -181,7 +181,7 @@
             const megaMember = product.mega_member;
 
             const memberPlanItems = childOptions.map(o => `
-                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_mega_member_installment_price}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
                         <div class="qa-plan-label">${o.plan_name}</div>
@@ -191,7 +191,7 @@
             `).join('');
 
             const nonMemberPlanItems = childOptions.map(o => `
-                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_installment_price}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
                         <div class="qa-plan-label">${o.plan_name}</div>
@@ -218,7 +218,7 @@
                         <div class="product-name">${product.product_name}</div>
                         <div class="pl-meta product-prescription">${product.subtitle || ''}</div>
                         <div class="pl-meta">$${(+product.lowest_price || 0).toFixed(0)}/mo</div>
-                        <div class="qa-container" id="qa-container-${index}">
+                        <div class="qa-container" id="qa-container-${index}" data-product-name="${product.product_name}" data-product-image="${product.thumbnail}" data-product-url="${window.location.origin}/product/${product.sku}">
                             <a href="/product/${product.sku}" class="button add-tocart-button w-button">ADD TO CART</a>
                             <div class="qa-popup">
                                 <div class="qa-accordion member-pricing">
@@ -368,6 +368,23 @@
                         await addToCartAPI(planPayload, isGuest);
                     } else {
                         await addToCartAPI(planPayload, isGuest);
+                    }
+
+                    // Braze Tracking: Added to Cart
+                    if (window.trackEvent) {
+                        const userInfo = window.userInfo || {};
+                        const isLoggedIn = !!window.authToken;
+                        const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
+
+                        const eventProperties = {
+                            email: email,
+                            product_name: container.dataset.productName,
+                            product_image: container.dataset.productImage,
+                            product_price: parseFloat(selectedPlanItem.dataset.price || 0),
+                            product_url: container.dataset.productUrl
+                        };
+                        window.trackEvent('add_to_cart', eventProperties);
+                        console.log('Braze event fired: add_to_cart', eventProperties);
                     }
 
                     if (window.toggleCart) window.toggleCart();

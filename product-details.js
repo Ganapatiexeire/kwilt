@@ -458,15 +458,21 @@
                         }
                     }
 
-                    // Braze Tracking: Add to Cart Success
+                    // Braze Tracking: Added to Cart
                     if (window.trackEvent) {
+                        const userInfo = window.userInfo || {};
+                        const isLoggedIn = !!window.authToken;
+                        const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
+
                         const eventProperties = {
-                            product_id: selectedPlan.dataset.sku,
-                            cart_id: getCartId(),
-                            timestamp: new Date().toISOString()
+                            email: email,
+                            product_name: productData.product_name,
+                            product_image: productData.thumbnail,
+                            product_price: parseFloat(selectedPlan.dataset.price),
+                            product_url: window.location.href
                         };
-                        window.trackEvent('add_to_cart_success', eventProperties);
-                        console.log('Braze event fired: add_to_cart_success', eventProperties);
+                        window.trackEvent('add_to_cart', eventProperties);
+                        console.log('Braze event fired: add_to_cart', eventProperties);
                     }
 
                     // Common success handling
@@ -541,19 +547,32 @@
             setupEventListeners(userState, productData);
             window.kwiltProductDetailsUtils.updateUI();
 
-            // Braze Tracking: Product Viewed
-            if (window.trackEvent) {
-                const eventProperties = {
-                    product_id: productData.sku,
-                    product_name: productData.product_name,
-                    price: productData.price,
-                    mega_member_price: productData.mega_member_price,
-                    has_mega_pricing: !!productData.mega_member_price,
-                    is_mega_member: userState.isMember,
-                    timestamp: new Date().toISOString()
-                };
-                window.trackEvent('product_viewed', eventProperties);
-                console.log('Braze event fired: product_viewed', eventProperties);
+            // Braze Tracking: Viewed Product
+            const fireBrazeEvent = () => {
+                if (window.trackEvent) {
+                    const userInfo = window.userInfo || {};
+                    const isLoggedIn = !!window.authToken; // Rely on the existing auth check
+
+                    const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
+                    const sms = isLoggedIn && userInfo.telephone ? userInfo.telephone : "";
+
+                    const eventProperties = {
+                        "email": email,
+                        "sms": sms,
+                        "product_name": productData.product_name,
+                        "product_image": productData.thumbnail,
+                        "product_price": productData.price || 0, // Fallback if price is missing
+                        "product_url": window.location.href
+                    };
+                    window.trackEvent('viewed_product', eventProperties);
+                    console.log('Braze event fired: viewed_product', eventProperties);
+                }
+            };
+
+            if (document.readyState === 'complete') {
+                fireBrazeEvent();
+            } else {
+                window.addEventListener('load', fireBrazeEvent);
             }
         } else {
             container.innerHTML = '<p style="text-align: center; margin-top: 50px;">Sorry, this product could not be loaded.</p>';

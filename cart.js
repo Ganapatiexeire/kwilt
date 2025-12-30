@@ -537,7 +537,7 @@
         const userIsMember = !!(getCookie('atkn') && window.memerShip);
 
         const memberPlanItems = childOptions.map(o => `
-            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_mega_member_installment_price}">
                 <div class="qa-plan-selection">
                     <div class="qa-radio"></div>
                     <div class="qa-plan-label">${o.plan_name}</div>
@@ -547,7 +547,7 @@
         `).join('');
 
         const nonMemberPlanItems = childOptions.map(o => `
-            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}">
+            <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_installment_price}">
                 <div class="qa-plan-selection">
                     <div class="qa-radio"></div>
                     <div class="qa-plan-label">${o.plan_name}</div>
@@ -572,7 +572,7 @@
                 <div class="kwilt-recommended-item-content">
                     <div class="kwilt-recommended-item-main">
                         <div class="kwilt-recommended-name-new">${product.product_name}</div>
-                        <div class="qa-container" id="qa-rec-container-${index}">
+                        <div class="qa-container" id="qa-rec-container-${index}" data-product-name="${product.product_name}" data-product-image="${product.thumbnail}" data-product-url="${window.location.origin}/product/${product.sku}">
                             <button class="kwilt-recommended-add-btn-new">ADD</button>
                             <div class="qa-popup">
                                 <div class="qa-accordion member-pricing">
@@ -801,6 +801,23 @@
                         await cartApi.addItem(planPayload);
                     } else {
                         await cartApi.addItem(planPayload);
+                    }
+                    
+                    // Braze Tracking: Added to Cart
+                    if (window.trackEvent) {
+                        const userInfo = window.userInfo || {};
+                        const isLoggedIn = !!getCookie('atkn');
+                        const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
+
+                        const eventProperties = {
+                            email: email,
+                            product_name: container.dataset.productName,
+                            product_image: container.dataset.productImage,
+                            product_price: parseFloat(selectedPlanItem.dataset.price || 0),
+                            product_url: container.dataset.productUrl
+                        };
+                        window.trackEvent('add_to_cart', eventProperties);
+                        console.log('Braze event fired: add_to_cart', eventProperties);
                     }
                     
                     await refreshCart();
