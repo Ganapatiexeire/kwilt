@@ -384,6 +384,18 @@
                             product_url: container.dataset.productUrl
                         };
                         window.trackEvent('add_to_cart', eventProperties);
+
+                        // Save to User Profile for CSV Export (Custom Attributes)
+                        if (window.braze) {
+                            const user = window.braze.getUser();
+                            if (user) {
+                                user.setCustomUserAttribute('product_name', container.dataset.productName);
+                                user.setCustomUserAttribute('product_image', container.dataset.productImage);
+                                user.setCustomUserAttribute('product_price', parseFloat(selectedPlanItem.dataset.price || 0));
+                                user.setCustomUserAttribute('product_url', container.dataset.productUrl);
+                                console.log('[Braze] User attributes updated');
+                            }
+                        }
                         console.log('Braze event fired: add_to_cart', eventProperties);
                     }
 

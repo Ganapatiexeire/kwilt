@@ -472,6 +472,18 @@
                             product_url: window.location.href
                         };
                         window.trackEvent('add_to_cart', eventProperties);
+
+                        // Save to User Profile for CSV Export (Custom Attributes)
+                        if (window.braze) {
+                            const user = window.braze.getUser();
+                            if (user) {
+                                user.setCustomUserAttribute('product_name', productData.product_name);
+                                user.setCustomUserAttribute('product_image', productData.thumbnail);
+                                user.setCustomUserAttribute('product_price', parseFloat(selectedPlan.dataset.price));
+                                user.setCustomUserAttribute('product_url', window.location.href);
+                                console.log('[Braze] User attributes updated');
+                            }
+                        }
                         console.log('Braze event fired: add_to_cart', eventProperties);
                     }
 
@@ -562,9 +574,22 @@
                         "product_name": productData.product_name,
                         "product_image": productData.thumbnail,
                         "product_price": productData.price || 0, // Fallback if price is missing
-                        "product_url": window.location.href
+                        "product_url": window.location.href,
+                        timestamp: new Date().toISOString()
                     };
                     window.trackEvent('viewed_product', eventProperties);
+
+                    // Save to User Profile for CSV Export (Custom Attributes)
+                    if (window.braze) {
+                        const user = window.braze.getUser();
+                        if (user) {
+                            user.setCustomUserAttribute('product_name', productData.product_name);
+                            user.setCustomUserAttribute('product_image', productData.thumbnail);
+                            user.setCustomUserAttribute('product_price', parseFloat(productData.price || 0));
+                            user.setCustomUserAttribute('product_url', window.location.href);
+                            console.log('[Braze] User attributes updated (viewed_product)');
+                        }
+                    }
                     console.log('Braze event fired: viewed_product', eventProperties);
                 }
             };
