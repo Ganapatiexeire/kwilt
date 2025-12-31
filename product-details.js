@@ -137,6 +137,11 @@
             //     planItem.classList.add('selected');
             // }
             const price = parseFloat(option[priceKey]).toFixed(0);
+            
+            // Determine the total price key based on membership status
+            const totalPriceKey = isMember ? 'mega_member_installment_price' : 'installment_price';
+            const totalPrice = option[totalPriceKey] ? parseFloat(option[totalPriceKey]).toFixed(0) : price;
+
             const label = `${option.plan_name}`;
             planItem.innerHTML = `
                 <div class="plan-radio"></div>
@@ -147,6 +152,7 @@
             `;
             planItem.dataset.sku = option.sku;
             planItem.dataset.price = price;
+            planItem.dataset.totalPrice = totalPrice;
             planItem.dataset.label = label;
             planItem.dataset.isMember = isMember;
             planItem.dataset.oid = option.__oid;
@@ -380,10 +386,12 @@
 
                 // Braze Tracking: Add to Cart Attempted
                 if (window.trackEvent) {
+                    const attemptPrice = parseFloat(selectedPlan.dataset.totalPrice || selectedPlan.dataset.price || 0);
+
                     const eventProperties = {
                         product_id: selectedPlan.dataset.sku,
                         product_name: productData.product_name,
-                        price: parseFloat(selectedPlan.dataset.price),
+                        price: attemptPrice,
                         purchase_option: selectedPlan.dataset.isMember === 'true' ? 'member' : 'non-member',
                         comprehensive_panel_selected: isPanelSelected,
                         timestamp: new Date().toISOString()
@@ -464,11 +472,13 @@
                         const isLoggedIn = !!window.authToken;
                         const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
 
+                        const finalPrice = parseFloat(selectedPlan.dataset.totalPrice || selectedPlan.dataset.price || 0);
+
                         const eventProperties = {
                             email: email,
                             product_name: productData.product_name,
                             product_image: productData.thumbnail,
-                            product_price: parseFloat(selectedPlan.dataset.price),
+                            product_price: finalPrice,
                             product_url: window.location.href
                         };
                         window.trackEvent('add_to_cart', eventProperties);
@@ -479,7 +489,7 @@
                             if (user) {
                                 user.setCustomUserAttribute('product_name', productData.product_name);
                                 user.setCustomUserAttribute('product_image', productData.thumbnail);
-                                user.setCustomUserAttribute('product_price', parseFloat(selectedPlan.dataset.price));
+                                user.setCustomUserAttribute('product_price', finalPrice);
                                 user.setCustomUserAttribute('product_url', window.location.href);
                                 console.log('[Braze] User attributes updated');
                             }

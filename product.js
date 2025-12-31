@@ -181,7 +181,7 @@
             const megaMember = product.mega_member;
 
             const memberPlanItems = childOptions.map(o => `
-                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_mega_member_installment_price}">
+                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_mega_member_installment_price}" data-total-price="${o.mega_member_installment_price}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
                         <div class="qa-plan-label">${o.plan_name}</div>
@@ -191,7 +191,7 @@
             `).join('');
 
             const nonMemberPlanItems = childOptions.map(o => `
-                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_installment_price}">
+                <div class="qa-plan-item" data-sku="${o.sku}" data-oid="${o.__oid}" data-vid="${o.__vid}" data-price="${o.monthly_installment_price}" data-total-price="${o.installment_price}">
                     <div class="qa-plan-selection">
                         <div class="qa-radio"></div>
                         <div class="qa-plan-label">${o.plan_name}</div>
@@ -247,7 +247,7 @@
                                     </div>
                                 </div>
                                 ${megaMember ? `
-                                <div class="qa-panel comprehensive-panel ${userIsMember ? 'disabled' : ''}" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}">
+                                <div class="qa-panel comprehensive-panel ${userIsMember ? 'disabled' : ''}" data-sku="${megaMember.sku}" data-oid="${megaMember.__oid}" data-vid="${megaMember.__vid}" data-total-price="${megaMember.installment_price}">
                                     <div class="qa-panel-header">
                                         <div class="qa-header-content">
                                             <div class="qa-radio"></div>
@@ -376,11 +376,13 @@
                         const isLoggedIn = !!window.authToken;
                         const email = isLoggedIn && userInfo.email ? userInfo.email : 'guestuser';
 
+                        const finalPrice = parseFloat(selectedPlanItem.dataset.totalPrice || selectedPlanItem.dataset.price || 0);
+
                         const eventProperties = {
                             email: email,
                             product_name: container.dataset.productName,
                             product_image: container.dataset.productImage,
-                            product_price: parseFloat(selectedPlanItem.dataset.price || 0),
+                            product_price: finalPrice,
                             product_url: container.dataset.productUrl
                         };
                         window.trackEvent('add_to_cart', eventProperties);
@@ -391,7 +393,7 @@
                             if (user) {
                                 user.setCustomUserAttribute('product_name', container.dataset.productName);
                                 user.setCustomUserAttribute('product_image', container.dataset.productImage);
-                                user.setCustomUserAttribute('product_price', parseFloat(selectedPlanItem.dataset.price || 0));
+                                user.setCustomUserAttribute('product_price', finalPrice);
                                 user.setCustomUserAttribute('product_url', container.dataset.productUrl);
                                 console.log('[Braze] User attributes updated');
                             }
